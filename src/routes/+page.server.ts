@@ -1,6 +1,7 @@
 import { CLIENT_ID, REDIRECT_URI } from '$env/static/private';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoadEvent } from './$types';
 import { redirect } from '@sveltejs/kit';
+import { logger } from '$lib/server';
 
 export const actions: Actions = {
     authorize: async ({ cookies, request, url }) => {
@@ -15,3 +16,7 @@ export const actions: Actions = {
         throw redirect(301, `https://discord.com/oauth2/authorize?${urlParams}`);
     },
 };
+
+export function load({ cookies }: PageServerLoadEvent) {
+    return {};
+}
