@@ -1,20 +1,7 @@
-import { Logger } from '@tsed/logger';
 import '@tsed/logger-file';
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 import { DISCORD_TOKEN } from '$env/static/private';
-
-export const logger = new Logger('Main');
-
-logger.appenders.set('file', {
-    type: 'file',
-    filename: `./logs/latest.log`,
-    layout: { type: 'basic' },
-    pattern: '.yyyy-MM-dd',
-});
-
-logger.appenders.set('console', {
-    type: 'console',
-});
+import { logger } from '$lib/server/logger';
 
 export const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],

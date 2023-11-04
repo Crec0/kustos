@@ -1,10 +1,9 @@
 import { CLIENT_ID, REDIRECT_URI } from '$env/static/private';
 import type { Actions, PageServerLoadEvent } from './$types';
 import { redirect } from '@sveltejs/kit';
-import { logger } from '$lib/server';
 
 export const actions: Actions = {
-    authorize: async ({ cookies, request, url }) => {
+    authorize: async (event) => {
         const urlParams = new URLSearchParams({
             client_id: CLIENT_ID,
             prompt: 'consent',

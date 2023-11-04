@@ -16,11 +16,15 @@
 		"@tsed/logger-file": "^6.6.3",
 		"better-sqlite3": "^9.0.0",
 		"discord.js": "^14.13.0",
-		"drizzle-orm": "^0.28.6"
+		"drizzle-orm": "^0.28.6",
+		"jose": "^5.1.0",
+		"zod": "^3.22.4"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.1.0",
 		"@sveltejs/kit": "^1.27.2",
+		"@types/better-sqlite3": "^7.6.6",
+		"@types/node": "^20.8.10",
 		"autoprefixer": "^10.4.16",
 		"postcss": "^8.4.31",
 		"prettier": "^3.0.3",
