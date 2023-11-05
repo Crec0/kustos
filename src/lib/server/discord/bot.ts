@@ -1,9 +1,9 @@
 import '@tsed/logger-file';
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 import { DISCORD_TOKEN } from '$env/static/private';
-import { logger } from '$lib/server/logger';
+import { logger } from '$lib/server';
 
-export const client = new Client({
+export const bot = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
     allowedMentions: { parse: [] },
     presence: {
@@ -11,8 +11,8 @@ export const client = new Client({
     },
 });
 
-client.once('ready', async () => {
-    logger.info(`${client.user!.tag} is online!`);
+bot.once('ready', async () => {
+    logger.info(`${bot.user!.tag} is online!`);
 });
 
-await client.login(DISCORD_TOKEN);
+await bot.login(DISCORD_TOKEN);

@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import { discordOAuthSchema, discordUserSchema } from '$lib/server/discord/schemas';
-import { logger } from '$lib/server/logger';
+import { logger } from '$lib/server';
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '$env/static/private';
 
 const DISCORD_API = 'https://discord.com/api/v10';

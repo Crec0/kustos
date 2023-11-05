@@ -1,10 +1,10 @@
 import { ISSUER } from '$env/static/private';
 import type { Actions, PageServerLoadEvent } from './$types';
-import { type Cookies, redirect } from '@sveltejs/kit';
+import { type Cookies, fail, redirect } from '@sveltejs/kit';
 import { safeVerifyJWT } from '$lib/utils';
-import { client } from '$lib/server/discord/bot';
+import { bot } from '$lib/server/discord/bot';
 import { goto } from '$app/navigation';
-import { publicKey } from '$lib/server';
+import { logger, publicKey } from '$lib/server';
 import { discordOAuthURL } from '$lib/server/discord/http';
 
 async function verifySession(cookies: Cookies) {
@@ -45,12 +45,14 @@ export async function load({ cookies }: PageServerLoadEvent) {
         data.isVerified = true;
 
         const userID = verifyResult.jwt.payload.userID;
-        const user = await client.users.fetch(userID, { force: true });
+        const user = await bot.users.fetch(userID, { force: true });
 
         data.userID = user.id;
         data.userName = user.username;
     } else {
+        logger.info('?', verifyResult?.error);
         cookies.delete('session_token');
+        throw fail(403, { code: 'RELOG', body: 'Failed to verify session token. Please relog.' });
     }
 
     return data;
