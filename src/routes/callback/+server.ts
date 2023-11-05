@@ -1,6 +1,13 @@
 import type { RequestEvent } from '@sveltejs/kit';
-import { fail, redirect, text } from '@sveltejs/kit';
-import { CLIENT_ID, CLIENT_SECRET, ISSUER, PRIVATE_KEY, REDIRECT_URI } from '$env/static/private';
+import { fail, redirect } from '@sveltejs/kit';
+import {
+    CLIENT_ID,
+    CLIENT_SECRET,
+    ISSUER,
+    PRIVATE_KEY,
+    REDIRECT_URI,
+    SESSION_EXPIRY_SECONDS,
+} from '$env/static/private';
 import { logger } from '$lib/server/logger';
 import { SignJWT } from 'jose';
 import { createPrivateKey } from 'crypto';
@@ -9,6 +16,11 @@ import { oauthSchema, userSchema } from '$lib/server/schemas';
 const DISCORD_ENDPOINT = 'https://discord.com/api/v10';
 const OAUTH_TOKEN_URL = `${DISCORD_ENDPOINT}/oauth2/token`;
 const USER_ME_URL = `${DISCORD_ENDPOINT}/users/@me`;
+
+const privateKey = createPrivateKey({
+    key: Buffer.from(PRIVATE_KEY, 'base64'),
+    format: 'pem',
+});
 
 async function fetchOAuthToken(code: string) {
     const params = new URLSearchParams({
@@ -79,26 +91,18 @@ export async function GET(data: RequestEvent): Promise<Response> {
         throw fail(403, { body: 'Code parameter not provided' });
     }
 
-    try {
-        const oAuth = await fetchOAuthToken(code);
-        const user = await fetchUser(oAuth.token_type, oAuth.access_token);
+    const oAuth = await fetchOAuthToken(code);
+    const user = await fetchUser(oAuth.token_type, oAuth.access_token);
 
-        const privateKey = createPrivateKey({
-            key: Buffer.from(PRIVATE_KEY, 'base64'),
-            format: 'pem',
-        });
+    const sessionExpirySeconds = parseInt(SESSION_EXPIRY_SECONDS);
+    const expireTime = Date.now() + sessionExpirySeconds;
 
-        const jwt = await new SignJWT({ user_id: user.id })
-            .setProtectedHeader({ alg: 'EdDSA' })
-            .setExpirationTime(Date.now() + 3600)
-            .setIssuer(ISSUER)
-            .sign(privateKey);
+    const jwt = await new SignJWT({ userID: user.id })
+        .setProtectedHeader({ alg: 'EdDSA' })
+        .setExpirationTime(Math.floor(expireTime / 1000))
+        .setIssuer(ISSUER)
+        .sign(privateKey);
 
-        logger.info(jwt);
-    } catch (error) {
-        logger.error(error);
-        return text('An unexpected error occurred!');
-    }
-
+    data.cookies.set('session_token', jwt, { path: '/' });
     throw redirect(301, '/');
 }
