@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const userSchema = z.object({
+export const discordUserSchema = z.object({
     id: z.string(),
     username: z.string(),
     discriminator: z.string(),
@@ -20,7 +20,7 @@ export const userSchema = z.object({
     avatar_decoration: z.string().optional().nullable(),
 });
 
-export const oauthSchema = z.object({
+export const discordOAuthSchema = z.object({
     access_token: z.string(),
     token_type: z.string(),
     expires_in: z.number(),

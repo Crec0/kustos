@@ -1,43 +1,31 @@
-import { CLIENT_ID, ISSUER, REDIRECT_URI } from '$env/static/private';
+import { ISSUER } from '$env/static/private';
 import type { Actions, PageServerLoadEvent } from './$types';
-import { redirect } from '@sveltejs/kit';
-import { createPublicKey } from 'crypto';
-import { PUBLIC_KEY } from '$env/static/public';
-import { logger } from '$lib/server/logger';
+import { type Cookies, redirect } from '@sveltejs/kit';
 import { safeVerifyJWT } from '$lib/utils';
-import { client } from '$lib/server/bot';
+import { client } from '$lib/server/discord/bot';
 import { goto } from '$app/navigation';
+import { publicKey } from '$lib/server';
+import { discordOAuthURL } from '$lib/server/discord/http';
 
-const publicKey = createPublicKey({
-    key: Buffer.from(PUBLIC_KEY, 'base64'),
-    format: 'pem',
-});
+async function verifySession(cookies: Cookies) {
+    const sessionCookie = cookies.get('session_token');
+
+    if (sessionCookie != null) {
+        return await safeVerifyJWT(sessionCookie, publicKey, {
+            issuer: ISSUER,
+            clockTolerance: 30,
+        });
+    }
+
+    return null;
+}
 
 export const actions: Actions = {
     authorize: async ({ cookies }) => {
-        let isVerified = false;
+        let verifyResult = await verifySession(cookies);
 
-        const sessionCookie = cookies.get('session_token');
-        if (sessionCookie != null) {
-            const verifyResult = await safeVerifyJWT(sessionCookie, publicKey, {
-                issuer: ISSUER,
-                clockTolerance: 30,
-            });
-            if (verifyResult.success) {
-                logger.info(verifyResult);
-                isVerified = true;
-            }
-        }
-
-        if (!isVerified) {
-            const urlParams = new URLSearchParams({
-                client_id: CLIENT_ID,
-                prompt: 'consent',
-                redirect_uri: REDIRECT_URI,
-                response_type: 'code',
-                scope: 'guilds identify',
-            });
-            throw redirect(301, `https://discord.com/oauth2/authorize?${urlParams}`);
+        if (!verifyResult || !verifyResult.success) {
+            throw redirect(301, discordOAuthURL());
         }
 
         await goto('/');
@@ -45,29 +33,24 @@ export const actions: Actions = {
 };
 
 export async function load({ cookies }: PageServerLoadEvent) {
-    const sessionCookie = cookies.get('session_token');
     let data = {
         isVerified: false,
         userID: '',
         userName: '',
     };
 
-    if (sessionCookie != null) {
-        const verifyResult = await safeVerifyJWT(sessionCookie, publicKey, {
-            issuer: ISSUER,
-            clockTolerance: 30,
-        });
-        if (verifyResult.success) {
-            data.isVerified = true;
+    const verifyResult = await verifySession(cookies);
 
-            const userID = verifyResult.jwt.payload.userID;
-            const user = await client.users.fetch(userID, { force: true });
+    if (verifyResult && verifyResult.success) {
+        data.isVerified = true;
 
-            data.userID = user.id;
-            data.userName = user.username;
-        } else {
-            cookies.delete('session_token');
-        }
+        const userID = verifyResult.jwt.payload.userID;
+        const user = await client.users.fetch(userID, { force: true });
+
+        data.userID = user.id;
+        data.userName = user.username;
+    } else {
+        cookies.delete('session_token');
     }
 
     return data;
