@@ -17,8 +17,3 @@
         </button>
     </form>
 {/if}
-
-<style>
-    body {
-    }
-</style>
