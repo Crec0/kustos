@@ -27,3 +27,23 @@ export const discordOAuthSchema = z.object({
     refresh_token: z.string(),
     scope: z.string(),
 });
+
+export const guildSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    icon: z.string().optional().nullable(),
+    owner: z.boolean(),
+    permissions: z.string(),
+    features: z.array(z.string()),
+    approximate_member_count: z.number().optional().nullable(),
+    approximate_presence_count: z.number().optional().nullable(),
+});
+
+export const guildsSchema = z.array(guildSchema);
+
+type DiscordUser = z.infer<typeof discordUserSchema>;
+type DiscordOAuth = z.infer<typeof discordOAuthSchema>;
+type DiscordGuild = z.infer<typeof guildSchema>;
+type DiscordGuilds = z.infer<typeof guildsSchema>;
+
+export type { DiscordUser, DiscordOAuth, DiscordGuild, DiscordGuilds };
