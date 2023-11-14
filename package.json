@@ -12,17 +12,22 @@
         "format": "prettier --write src/**/*.{svelte,js,css,ts,html}"
     },
     "dependencies": {
+        "@fontsource-variable/quicksand": "^5.0.15",
+        "@melt-ui/svelte": "^0.61.1",
         "@tsed/logger": "^6.6.3",
         "@tsed/logger-file": "^6.6.3",
         "better-sqlite3": "^9.0.0",
         "discord.js": "^14.13.0",
         "drizzle-orm": "^0.28.6",
         "jose": "^5.1.0",
+        "lucide-svelte": "^0.292.0",
         "zod": "^3.22.4"
     },
     "devDependencies": {
+        "@melt-ui/pp": "^0.1.2",
         "@sveltejs/adapter-auto": "^2.1.0",
         "@sveltejs/kit": "^1.27.2",
+        "@tailwindcss/typography": "^0.5.10",
         "@types/better-sqlite3": "^7.6.6",
         "@types/node": "^20.8.10",
         "autoprefixer": "^10.4.16",
@@ -32,6 +37,7 @@
         "prettier-plugin-tailwindcss": "^0.5.6",
         "svelte": "^4.2.2",
         "svelte-check": "^3.5.2",
+        "svelte-sequential-preprocessor": "^2.0.1",
         "tailwindcss": "^3.3.5",
         "tslib": "^2.6.2",
         "typescript": "^5.2.2",
