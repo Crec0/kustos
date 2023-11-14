@@ -5,20 +5,25 @@ import { SignJWT } from 'jose';
 import { fetchDiscordOAuthToken, fetchDiscordOAuthUser } from '$lib/server/discord/http';
 import { privateKey } from '$lib/server';
 import { db, tokensTable } from '$lib/server/database';
-import { epochSecondsAfter } from '$lib/utils';
+import { epochSecondsAfter } from '$lib/server/utils/math';
 import { eq } from 'drizzle-orm';
+import type { DiscordOAuth, DiscordUser } from '$lib/server/discord/schemas';
 
-export async function GET(data: RequestEvent): Promise<Response> {
-    const code = data.url.searchParams.get('code');
+async function getOAuthAndUser(event: RequestEvent) {
+    const params = event.url.searchParams;
+    const code = params.get('code');
 
     if (!code) {
         throw fail(403, { body: 'Code parameter not provided' });
     }
 
-    const oAuth = await fetchDiscordOAuthToken(code);
-    const user = await fetchDiscordOAuthUser(oAuth.token_type, oAuth.access_token);
-    const expireTime = epochSecondsAfter(oAuth.expires_in);
+    const oAuth: DiscordOAuth = await fetchDiscordOAuthToken(params);
+    const user: DiscordUser = await fetchDiscordOAuthUser(oAuth.token_type, oAuth.access_token);
 
+    return { oAuth, user };
+}
+
+function storeTokenInfo(oAuth: DiscordOAuth, user: DiscordUser, expireTime: number) {
     db.insert(tokensTable)
         .values({
             access_token: oAuth.access_token,
@@ -37,14 +42,34 @@ export async function GET(data: RequestEvent): Promise<Response> {
         })
         .prepare(true)
         .run();
+}
 
-    // TODO: Move this to a separate file along with jwt refresh function
-    const jwt = await new SignJWT({ userID: user.id })
+async function generateJWT(userID: string, expireTime: number): Promise<string> {
+    return new SignJWT({ userID: userID })
         .setProtectedHeader({ alg: 'EdDSA' })
         .setExpirationTime(expireTime)
         .setIssuer(ISSUER)
         .sign(privateKey);
+}
 
-    data.cookies.set('session_token', jwt, { path: '/' });
+function setJWTCookie(event: RequestEvent, jwt: string) {
+    event.cookies.set('session_token', jwt, {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: true,
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+}
+
+export async function GET(event: RequestEvent): Promise<Response> {
+    const { oAuth, user } = await getOAuthAndUser(event);
+    const expireTime = epochSecondsAfter(oAuth.expires_in);
+
+    storeTokenInfo(oAuth, user, expireTime);
+
+    const jwt = await generateJWT(user.id, expireTime);
+    setJWTCookie(event, jwt);
+
     throw redirect(301, '/');
 }
