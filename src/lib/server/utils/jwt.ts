@@ -1,5 +1,8 @@
 import { type JWTPayload, jwtVerify, type JWTVerifyOptions, type JWTVerifyResult } from 'jose';
 import type { KeyObject } from 'crypto';
+import { publicKey } from '$lib/server';
+import { ISSUER } from '$env/static/private';
+import type { Cookies } from '@sveltejs/kit';
 
 interface SessionJWT extends JWTPayload {
     userID: string;
@@ -34,6 +37,24 @@ export async function safeVerifyJWT(
     }
 }
 
-export const epochSeconds = () => Math.floor(Date.now() / 1000);
+export async function verifySession(cookies: string | undefined) {
+    if (cookies == null) {
+        return {
+            success: false,
+            error: 'Cookie not found',
+        } satisfies SafeVerifyError;
+    }
+    return await safeVerifyJWT(cookies, publicKey, {
+        issuer: ISSUER,
+        clockTolerance: 30,
+    });
+}
 
-export const epochSecondsAfter = (interval: number) => epochSeconds() + interval;
+export async function verifyJWTAndGetUserID(cookies: Cookies) {
+    const sessionTokenCookie = cookies.get('session_token');
+    const verificationResult = await verifySession(sessionTokenCookie);
+    if (verificationResult.success) {
+        return verificationResult.jwt.payload.userID;
+    }
+    return null;
+}
