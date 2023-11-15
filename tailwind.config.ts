@@ -20,14 +20,14 @@ export default {
             function ({ addBase, matchUtilities }) {
                 addBase({
                     [':root']: {
-                        '--color-error': 'rgb(229 116 116)',
-                        '--color-error-60': 'rgb(229 116 116 / .6)',
-                        '--color-success': 'rgb(140 207 126)',
-                        '--color-success-60': 'rgb(140 207 126 / .6)',
-                        '--color-warn': 'rgb(229 199 107)',
-                        '--color-warn-60': 'rgb(229 199 107 / .6)',
-                        '--color-info': 'rgb(103 176 232)',
-                        '--color-info-60': 'rgb(103 176 232 / .6)',
+                        '--color-error': '#E57474',
+                        '--color-error-60': '#ed9e9e',
+                        '--color-success': '#8CCF7E',
+                        '--color-success-60': '#afdda5',
+                        '--color-warn': '#E5C76B',
+                        '--color-warn-60': '#edd897',
+                        '--color-info': '#67B0E8',
+                        '--color-info-60': '#95c8ef',
                     },
                 });
                 matchUtilities({
