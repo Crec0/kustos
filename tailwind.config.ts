@@ -6,28 +6,49 @@ export default {
     theme: {
         extend: {
             colors: {
-                background: '#141b1e',
-                'light-background': '#232a2d',
-                error: '#e57474',
-                success: '#8ccf7e',
-                warning: '#e5c76b',
-                info: '#67b0e8',
-                magenta: '#c47fd5',
-                cyan: '#6cbfbf',
-                'light-gray': '#b3b9b8',
-                white: '#dadada',
+                background: 'rgb(20 27 30)',
+                'light-background': 'rgb(35 42 45)',
+                magenta: 'rgb(196 127 213)',
+                cyan: 'rgb(108 191 191)',
+                'light-gray': 'rgb(179 185 184)',
+                white: 'rgb(218 218 218)',
             },
         },
     },
     plugins: [
-        plugin(function ({ matchUtilities }) {
-            // Square utility
-            matchUtilities({
-                sq: (value) => ({
-                    width: value,
-                    height: value,
-                }),
-            });
-        }),
+        plugin(
+            function ({ addBase, matchUtilities }) {
+                addBase({
+                    [':root']: {
+                        '--color-error': 'rgb(229 116 116)',
+                        '--color-error-60': 'rgb(229 116 116 / .6)',
+                        '--color-success': 'rgb(140 207 126)',
+                        '--color-success-60': 'rgb(140 207 126 / .6)',
+                        '--color-warn': 'rgb(229 199 107)',
+                        '--color-warn-60': 'rgb(229 199 107 / .6)',
+                        '--color-info': 'rgb(103 176 232)',
+                        '--color-info-60': 'rgb(103 176 232 / .6)',
+                    },
+                });
+                matchUtilities({
+                    sq: (value) => ({
+                        width: value,
+                        height: value,
+                    }),
+                });
+            },
+            {
+                theme: {
+                    extend: {
+                        colors: {
+                            error: 'var(--color-error)',
+                            success: 'var(--color-error)',
+                            warn: 'var(--color-error)',
+                            info: 'var(--color-error)',
+                        },
+                    },
+                },
+            },
+        ),
     ],
 } satisfies Config;
