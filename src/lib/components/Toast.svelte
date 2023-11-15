@@ -46,24 +46,18 @@
     use:melt={$progress}
 >
     <div
-        class="relative flex w-[24rem] max-w-[calc(100vw-2rem)] items-center justify-between gap-4 p-5 pt-6"
+        class="relative flex w-[24rem] max-w-[calc(100vw-2rem)] items-center justify-between gap-3 p-3"
     >
         <div>
-            <h3 class="flex items-center gap-2 font-semibold" use:melt={$toastTitle(toast.id)}>
+            <h3 class="flex items-center text-lg font-semibold" use:melt={$toastTitle(toast.id)}>
                 {title}
-                <span class="sq-1.5 rounded-full fg-{color}" />
             </h3>
             <div use:melt={$toastDescription(toast.id)}>
                 {description}
             </div>
         </div>
-        <button
-            class="
-                bg-{color} sq-6 hover:bg-{color}/50
-                absolute right-4 top-4 grid place-items-center rounded-full"
-            use:melt={$closeToast(toast.id)}
-        >
-            <X class="sq-4" />
+        <button class="absolute right-4 top-4" use:melt={$closeToast(toast.id)}>
+            <X class="sq-6" />
         </button>
     </div>
 </div>
