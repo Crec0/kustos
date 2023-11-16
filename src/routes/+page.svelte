@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PageData } from './$types';
+    import Login from '$components/Login.svelte';
 
     export let data: PageData;
 </script>
@@ -16,11 +17,5 @@
         </button>
     </form>
 {:else}
-    <form action="/?/login" method="post">
-        <button
-            class="m-2 rounded bg-blue-300 p-2 text-2xl font-semibold text-blue-50 ring-2 ring-inset ring-blue-400"
-        >
-            CLICK ME TO AUTHORIZE
-        </button>
-    </form>
+    <Login />
 {/if}
