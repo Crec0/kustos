@@ -1,21 +1,20 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import Login from '$components/Login.svelte';
+    import Logout from '$components/Logout.svelte';
 
     export let data: PageData;
 </script>
 
-{#if data.username != null}
-    <div class="m-2 rounded-sm bg-gray-700 p-2 text-2xl font-semibold text-gray-50">
-        Welcome back, {data.username}!
-    </div>
-    <form action="/?/logout" method="post">
-        <button
-            class="m-2 rounded bg-red-300 p-2 text-2xl font-semibold text-red-50 ring-2 ring-inset ring-red-400"
-        >
-            LOGOUT
-        </button>
-    </form>
-{:else}
+{#if data.username == null}
     <Login />
+{:else}
+    <div class="mx-auto mt-2 flex w-3/4 flex-col align-bottom">
+        <div class="flex items-center rounded-md bg-varden-400 px-6 py-2 text-3xl">
+            <span class="grow">
+                Welcome back, {data.username}!
+            </span>
+            <Logout />
+        </div>
+    </div>
 {/if}
