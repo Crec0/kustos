@@ -5,6 +5,6 @@
 
 <ToastPusher />
 
-<div class="flex min-h-screen flex-col bg-black text-black">
+<div class="font-body text-content bg-base flex min-h-screen flex-col">
     <slot />
 </div>
