@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import Login from '$components/Login.svelte';
+    import EmbedEditor from '$components/EmbedEditor.svelte';
     import Logout from '$components/Logout.svelte';
 
     export let data: PageData;
@@ -14,5 +15,6 @@
             <span class="grow"> Kustos [{data.username}] </span>
             <Logout />
         </div>
+        <EmbedEditor />
     </div>
 {/if}
