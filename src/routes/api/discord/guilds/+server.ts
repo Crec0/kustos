@@ -18,6 +18,8 @@ export async function GET({ cookies, request: { headers } }: RequestEvent): Prom
     const guilds = await fetchDiscordOAuthUserGuilds('Bearer', token.access_token);
     const botGuilds = new Set(bot.guilds.cache.keys());
 
+    // TODO: Add whitelisted guilds filter
+
     const sharedGuilds = guilds
         .filter((guild) => botGuilds.has(guild.id))
         .map((guild) => {
