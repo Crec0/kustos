@@ -9,11 +9,9 @@
 {#if data.username == null}
     <Login />
 {:else}
-    <div class="mx-auto mt-2 flex w-3/4 flex-col align-bottom">
-        <div class="flex items-center rounded-md bg-varden-400 px-6 py-2 text-3xl">
-            <span class="grow">
-                Welcome back, {data.username}!
-            </span>
+    <div class="mx-auto flex w-3/4 flex-col align-bottom">
+        <div class=" bg-varden-400 my-8 flex items-center rounded-md text-3xl">
+            <span class="grow"> Kustos [{data.username}] </span>
             <Logout />
         </div>
     </div>
