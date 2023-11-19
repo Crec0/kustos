@@ -9,11 +9,12 @@ export default {
         },
         extend: {
             colors: {
-                primary: '#3d5a80',
-                secondary: '#98c1d9',
-                accent: '#ee6c4d',
+                primary: '#3b3c3e',
+                secondary: '#ffd775',
+                'content-secondary': '#272829',
+                accent: '#636e72',
                 content: '#e0fbfc',
-                base: '#293241',
+                background: '#272829',
                 info: '#67B0E8',
                 'info-content': '#eef7fc',
                 success: '#8CCF7E',

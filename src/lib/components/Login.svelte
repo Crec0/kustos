@@ -8,10 +8,10 @@
         class="mx-auto flex max-w-md flex-col items-center bg-primary p-4 shadow-sm sm:p-10 md:mx-0 md:rounded-lg"
     >
         <img alt="Icon" src={Img} width="50%" />
-        <h1 class="text-content mb-8 text-center text-4xl font-bold">Kustos</h1>
+        <h1 class="mb-8 text-center text-4xl font-bold text-content">Kustos</h1>
         <form action="/?/login" class="flex justify-center" method="post">
             <button
-                class="text-md text-content m-2 flex content-center items-end gap-2 rounded bg-accent px-6 py-2 text-xl font-semibold"
+                class="text-md m-2 flex content-center items-end gap-2 rounded bg-secondary px-6 py-2 text-xl font-semibold text-primary"
                 type="submit"
             >
                 Login via Discord
