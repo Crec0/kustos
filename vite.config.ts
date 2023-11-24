@@ -1,9 +1,12 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import type { UserConfig } from 'vite';
+import purgeCss from 'vite-plugin-tailwind-purgecss';
 
-export default defineConfig({
-    plugins: [sveltekit()],
+const config: UserConfig = {
+    plugins: [sveltekit(), purgeCss()],
     preview: {
         port: 5173,
     },
-});
+};
+
+export default config;
