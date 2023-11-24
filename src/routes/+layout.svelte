@@ -1,9 +1,21 @@
 <script lang="ts">
     import '../app.css';
-    import { AppBar, AppShell, initializeStores, Toast } from '@skeletonlabs/skeleton';
-    import Img from '$lib/assets/icon.svg';
+    import {
+        AppBar,
+        AppRail,
+        AppRailAnchor,
+        AppShell,
+        Avatar,
+        initializeStores,
+        TabAnchor,
+        TabGroup,
+        Toast,
+    } from '@skeletonlabs/skeleton';
+    import Img from '$lib/assets/kustos.svg';
+    import Github from '$lib/assets/github.svg';
     import type { LayoutServerData } from './$types';
     import LoginLogout from '$components/LoginLogout.svelte';
+    import { page } from '$app/stores';
 
     export let data: LayoutServerData;
 
@@ -14,24 +26,77 @@
 
 <AppShell>
     <svelte:fragment slot="header">
-        <AppBar class="hidden md:block">
+        <AppBar gap="gap-0 md:gap-4">
             <svelte:fragment slot="lead">
                 <img alt="Icon" class="w-12" src={Img} />
             </svelte:fragment>
-            <span class="text-2xl hidden md:block font-semibold"> Kustos </span>
+
+            <div class="text-2xl hidden md:block font-semibold">Kustos</div>
+
             <svelte:fragment slot="trail">
                 <LoginLogout user={data} />
             </svelte:fragment>
         </AppBar>
     </svelte:fragment>
-    <div class="flex min-h-full justify-center">
+
+    <svelte:fragment slot="sidebarLeft">
+        <AppRail class="hidden md:grid">
+            <AppRailAnchor href="/" selected={$page.url.pathname === '/'}>
+                <span class="text-lg">Home</span>
+            </AppRailAnchor>
+
+            <AppRailAnchor href="/user" selected={$page.url.pathname === '/user'}>
+                <span class="text-lg">User</span>
+            </AppRailAnchor>
+
+            <AppRailAnchor href="/archive" selected={$page.url.pathname === '/archive'}>
+                <span class="text-lg">Archive</span>
+            </AppRailAnchor>
+
+            <AppRailAnchor href="/editor" selected={$page.url.pathname === '/editor'}>
+                <span class="text-lg">Editor</span>
+            </AppRailAnchor>
+
+            <svelte:fragment slot="trail">
+                <AppRailAnchor
+                    href="https://github.com/Crec0/kustos"
+                    target="_blank"
+                    title="Account"
+                >
+                    <svelte:fragment slot="lead">
+                        <Avatar width="w-10" src={Github} />
+                    </svelte:fragment>
+                </AppRailAnchor>
+            </svelte:fragment>
+        </AppRail>
+    </svelte:fragment>
+
+    <div class="flex justify-center">
         <slot />
     </div>
-    <svelte:fragment slot="footer">
-        <AppBar class="block md:hidden">
-            <svelte:fragment slot="lead">(icon)</svelte:fragment>
-            (title)
-            <svelte:fragment slot="trail">(actions)</svelte:fragment>
-        </AppBar>
+
+    <svelte:fragment slot="pageFooter">
+        <TabGroup
+            active="variant-filled-surface"
+            border=""
+            class="bg-surface-100-800-token md:hidden"
+            flex="flex-1 lg:flex-none"
+            hover="hover:variant-soft-primary"
+            justify="justify-center"
+            rounded=""
+        >
+            <TabAnchor href="/" selected={$page.url.pathname === '/'}>
+                <span>Home</span>
+            </TabAnchor>
+            <TabAnchor href="/user" selected={$page.url.pathname === '/user'}>
+                <span>User</span>
+            </TabAnchor>
+            <TabAnchor href="/archive" selected={$page.url.pathname === '/archive'}>
+                <span>Archive</span>
+            </TabAnchor>
+            <TabAnchor href="/editor" selected={$page.url.pathname === '/editor'}>
+                <span>Editor</span>
+            </TabAnchor>
+        </TabGroup>
     </svelte:fragment>
 </AppShell>

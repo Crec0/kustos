@@ -1,7 +1,6 @@
-<script lang='ts'>
+<script lang="ts">
     import type { PageData } from './$types';
     import { Avatar } from '@skeletonlabs/skeleton';
-
 
     export let data: PageData;
 
@@ -19,9 +18,9 @@
         console.log(Date.now(), numeric, diff, seconds, minutes, hours, days, months, years);
 
         return [
-            years > 0 ? `${ years } Years` : '',
-            months % 12 > 0 ? `${ months % 12 } Months` : '',
-            days % 365 > 0 ? `${ days % 365 } days` : '',
+            years > 0 ? `${years} Years` : '',
+            months % 12 > 0 ? `${months % 12} Months` : '',
+            days % 365 > 0 ? `${days % 365} days` : '',
         ].join(' ');
     }
 
@@ -33,27 +32,28 @@
 </script>
 
 <div
-    class='variant-filled-primary card h-max flex mt-20 flex-col justify-center items-center md:flex-row md:items-center'>
-    <div class='p-6 md:pr-3 pb-0 md:pb-6 '>
-        <Avatar class='w-32' src={data.avatarUrl} />
+    class="variant-filled-primary card h-max flex mt-20 flex-col justify-center items-center md:flex-row md:items-center"
+>
+    <div class="p-3 md:p-6 md:pr-3 pb-0 md:pb-6">
+        <Avatar class="w-32 rounded-xl" src={data.avatarUrl} />
     </div>
-    <div class='p-6 md:pl-3 flex flex-col justify-center'>
-        <div class='text-4xl font-bold'>
+    <div class="p-3 md:p-6 md:pl-3 flex flex-col justify-center">
+        <div class="text-4xl font-bold">
             {data.displayName}
         </div>
-        <div class='text-xl'>
+        <div class="text-xl">
             @{data.username}
         </div>
-        <div class='pt-6'>
-            <span class='font-bold'> ID </span>
+        <div class="pt-6">
+            <span class="font-bold"> ID </span>
             {data.id}
         </div>
-        <div class='w-max'>
-            <span class='font-bold'> Since </span>
+        <div class="w-max">
+            <span class="font-bold"> Since </span>
             {absolute(data.creation)}
         </div>
-        <div class='w-max'>
-            <span class='font-bold'> Age </span>
+        <div class="w-max">
+            <span class="font-bold"> Age </span>
             {relative(data.creation)}
         </div>
     </div>

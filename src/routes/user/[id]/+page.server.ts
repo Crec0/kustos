@@ -2,7 +2,6 @@ import type { PageServerLoadEvent } from './$types';
 import type { UserObject } from '$lib/types';
 import { logger } from '$lib/server';
 
-
 const defaultResponse: UserObject = {
     avatarUrl: '',
     id: '',
@@ -15,11 +14,11 @@ export async function load({ params, fetch }: PageServerLoadEvent): Promise<User
     const userID = params.id;
 
     try {
-        const response = await fetch(`/api/discord/user/${ userID }`);
-        if ( response.ok ) {
+        const response = await fetch(`/api/discord/user/${userID}`);
+        if (response.ok) {
             return response.json();
         }
-    } catch ( e ) {
+    } catch (e) {
         logger.error(e);
     }
 

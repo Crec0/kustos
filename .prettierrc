@@ -6,10 +6,7 @@
     "tabWidth": 4,
     "htmlWhitespaceSensitivity": "strict",
     "proseWrap": "always",
-    "plugins": [
-        "prettier-plugin-svelte",
-        "prettier-plugin-tailwindcss"
-    ],
+    "plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
     "overrides": [
         {
             "files": "*.svelte",

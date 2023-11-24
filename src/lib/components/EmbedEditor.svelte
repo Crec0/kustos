@@ -97,54 +97,102 @@
     }
 </script>
 
-<div class="flex">
-    <div class="flex items-center rounded-lg bg-gray-700 px-3 py-2 text-2xl">
-        <label class="mr-2 grow text-content" for="guild-select">Guild:</label>
-        <select
-            class="text-content-secondary rounded bg-secondary px-3 py-2 text-lg font-semibold"
-            id="guild-select"
-            on:change={onGuildSelection}
+<div>
+    <div class="flex">
+        <div class="flex items-center rounded-lg bg-primary px-3 py-2 text-2xl">
+            <label class="mr-2 grow text-content" for="guild-select">Guild:</label>
+            <select
+                class="rounded bg-secondary px-3 py-2 text-lg font-semibold text-content-secondary"
+                id="guild-select"
+                on:change={onGuildSelection}
+            >
+                <option disabled hidden selected value="">Select Guild</option>
+                {#each $guilds as guild, idx (idx)}
+                    <option class="text-xl font-semibold" value={guild.id}>
+                        {guild.name}
+                    </option>
+                {/each}
+            </select>
+        </div>
+        <div
+            class="ml-2 flex items-center rounded-lg bg-primary px-3 py-2 text-2xl text-content-secondary"
         >
-            <option disabled hidden selected value="">Select Guild</option>
-            {#each $guilds as guild, idx (idx)}
-                <option class="text-xl font-semibold" value={guild.id}>
-                    {guild.name}
-                </option>
-            {/each}
-        </select>
+            <label class="mr-2 grow text-content" for="guild-select">Channel:</label>
+            <select
+                class="rounded bg-secondary px-3 py-2 text-lg font-semibold text-content-secondary"
+                id="guild-select"
+                on:change={onChannelSelection}
+            >
+                <option disabled hidden selected value="">Select Channel</option>
+                {#each $channels as channel, idx (idx)}
+                    <option class="text-xl font-semibold" value={channel.id}>
+                        {channel.name}
+                    </option>
+                {/each}
+            </select>
+        </div>
     </div>
-    <div
-        class="text-content-secondary ml-2 flex items-center rounded-lg bg-gray-700 px-3 py-2 text-2xl"
-    >
-        <label class="mr-2 grow text-content" for="guild-select">Channel:</label>
-        <select
-            class="text-content-secondary rounded bg-secondary px-3 py-2 text-lg font-semibold"
-            id="guild-select"
-            on:change={onChannelSelection}
-        >
-            <option disabled hidden selected value="">Select Channel</option>
-            {#each $channels as channel, idx (idx)}
-                <option class="text-xl font-semibold" value={channel.id}>
-                    {channel.name}
-                </option>
-            {/each}
-        </select>
-    </div>
-</div>
-<div class="mt-2 flex w-max items-center rounded-lg bg-gray-700 px-3 py-2 text-2xl">
-    <label class="mr-2 grow text-content" for="guild-select">Tags:</label>
+    <div class="mt-2 flex w-max items-center rounded-lg bg-primary px-3 py-2 text-2xl">
+        <label class="mr-2 grow text-content" for="guild-select">Tags:</label>
 
-    {#each $availableTags as tag, idx (idx)}
-        <input
-            class="hidden"
-            id="tag-{tag.id}"
-            type="checkbox"
-            value={tag.id}
-            on:change={onTagSelect}
-        />
-        <label
-            for="tag-{tag.id}"
-            class="m-2 rounded bg-accent p-2 text-xl font-semibold text-content">{tag.name}</label
-        >
-    {/each}
+        {#each $availableTags as tag, idx (idx)}
+            <input
+                class="hidden"
+                id="tag-{tag.id}"
+                type="checkbox"
+                value={tag.id}
+                on:change={onTagSelect}
+            />
+            <label
+                for="tag-{tag.id}"
+                class="m-2 rounded bg-accent p-2 text-xl font-semibold text-content"
+                >{tag.name}</label
+            >
+        {/each}
+    </div>
+
+    <div class="flex gap-2">
+        <div class="mt-2 flex w-1/2 flex-col gap-2 rounded-lg bg-primary px-3 py-2 text-2xl">
+            <div class="relative mt-9">
+                <label for="archive-name" class="text-md absolute -translate-y-7 text-lg"
+                    >Name</label
+                >
+                <input
+                    id="archive-name"
+                    type="text"
+                    class="w-full rounded bg-accent px-3 py-2 text-2xl"
+                />
+            </div>
+
+            <div class="relative mt-9">
+                <label for="archive-credits" class="text-md absolute -translate-y-7 text-lg"
+                    >Credits</label
+                >
+                <input
+                    id="archive-name"
+                    type="text"
+                    class="w-full rounded bg-accent px-3 py-2 text-2xl"
+                />
+            </div>
+
+            <div class="relative mt-9">
+                <label for="archive-description" class="text-md absolute -translate-y-7 text-lg"
+                    >Description</label
+                >
+                <textarea
+                    id="archive-description"
+                    class="w-full rounded bg-accent px-3 py-2 text-2xl"
+                />
+            </div>
+
+            <div>
+                <label for="archive-files">Files:</label>
+                <input id="archive-files" type="file" />
+            </div>
+        </div>
+
+        <div class="mt-2 flex w-1/2 flex-col gap-2 rounded-lg bg-primary px-3 py-2 text-2xl">
+            <div class=""> </div>
+        </div>
+    </div>
 </div>
