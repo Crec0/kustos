@@ -1,18 +1,7 @@
-import type { Actions, PageServerLoadEvent } from './$types';
-import { bot } from '$lib/server/discord/bot';
-import { verifyJWTAndGetUserID } from '$lib/server/utils/jwt';
+import type { Actions } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { discordOAuthURL } from '$lib/server/discord/http';
 import { logger } from '$lib/server';
-
-export async function load({ cookies }: PageServerLoadEvent) {
-    const userID = await verifyJWTAndGetUserID(cookies);
-    let user = !userID ? null : await bot.users.fetch(userID, { force: true });
-
-    return {
-        username: user?.displayName,
-    };
-}
 
 export const actions: Actions = {
     login: ({ url: { searchParams } }) => {
