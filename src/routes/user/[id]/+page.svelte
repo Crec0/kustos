@@ -20,7 +20,7 @@
         return [
             years > 0 ? `${years} Years` : '',
             months % 12 > 0 ? `${months % 12} Months` : '',
-            days % 365 > 0 ? `${days % 365} days` : '',
+            days % 30 > 0 ? `${days % 30} days` : '',
         ].join(' ');
     }
 
