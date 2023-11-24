@@ -5,16 +5,19 @@ import { verifyJWTAndGetUserID } from '$lib/server/utils/jwt';
 import { constructRedirectURL } from '$lib/server/utils/url';
 
 const isProtectedRoute = (route: string) => {
-    return route !== '/' && route !== '/callback' && !route.startsWith('/error');
+    return route.startsWith('/editor') && route.startsWith('/api') && route !== '/api/callback';
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
     const userId = await verifyJWTAndGetUserID(event.cookies);
     if (userId == null) {
+        logger.debug('JWT verification failed. Redirecting...');
         if (event.route.id == null || isProtectedRoute(event.route.id)) {
+            logger.warn('Protected route or id is null. Redirecting...');
             throw redirect(302, constructRedirectURL(event.route.id, event.url.searchParams));
         }
     } else {
+        logger.debug('JWT verification passed. Setting x-user-id header');
         event.request.headers.set('x-user-id', userId);
     }
 

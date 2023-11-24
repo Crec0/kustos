@@ -19,6 +19,8 @@ export function discordOAuthURL(params: URLSearchParams) {
 }
 
 export async function fetchDiscordOAuthToken(params: URLSearchParams) {
+    logger.debug(`fetchDiscordOAuthToken() called with parameters: ${params}`);
+
     params.set('grant_type', 'authorization_code');
     params.set('redirect_uri', REDIRECT_URI);
 
@@ -31,8 +33,11 @@ export async function fetchDiscordOAuthToken(params: URLSearchParams) {
         body: params,
     });
 
+    logger.debug(`Post request to ${OAUTH_TOKEN} return status: ${response.status}`);
+
     const responseJson = await response.json();
     if (!response.ok) {
+        logger.error(`Failed to acquire OAuth token with status: ${response.status}`);
         throw fail(response.status, {
             body: 'Failed to acquire oauth token',
             discord_response: responseJson,
@@ -41,14 +46,17 @@ export async function fetchDiscordOAuthToken(params: URLSearchParams) {
 
     const parsed = discordOAuthSchema.safeParse(responseJson);
     if (parsed.success) {
+        logger.debug('Successfully parsed discord response');
         return parsed.data;
     }
 
-    logger.error(parsed.error);
+    logger.error(`Failed to parse discord response. Error: ${parsed.error}`);
     throw fail(400, { body: 'Failed to parse discord response' });
 }
 
 export async function fetchDiscordOAuthUser(tokenType: string, accessToken: string) {
+    logger.info('fetchDiscordOAuthUser: Start fetching OAuth user');
+
     const response = await fetch(OAUTH_USER, {
         method: 'GET',
         headers: {
@@ -59,19 +67,23 @@ export async function fetchDiscordOAuthUser(tokenType: string, accessToken: stri
 
     const responseJson = await response.json();
     if (!response.ok) {
+        logger.error(`fetchDiscordOAuthUser: fetch responded with status: ${response.status}`);
         throw fail(response.status, responseJson);
     }
 
     const parsed = discordUserSchema.safeParse(responseJson);
     if (parsed.success) {
+        logger.info('fetchDiscordOAuthUser: successfully parsed discord user');
         return parsed.data;
     }
 
-    logger.error(parsed.error);
+    logger.error(`fetchDiscordOAuthUser: Error - ${parsed.error}`);
     throw fail(400, { body: 'Failed to parse discord response' });
 }
 
 export async function fetchDiscordOAuthUserGuilds(tokenType: string, accessToken: string) {
+    logger.info('fetchDiscordOAuthUserGuilds: Start fetching OAuth user guilds');
+
     const response = await fetch(OAUTH_USER_GUILDS, {
         method: 'GET',
         headers: {
@@ -82,15 +94,18 @@ export async function fetchDiscordOAuthUserGuilds(tokenType: string, accessToken
 
     const responseJson = await response.json();
     if (!response.ok) {
-        logger.error(responseJson);
+        logger.error(
+            `fetchDiscordOAuthUserGuilds: fetch responded with status: ${response.status}`,
+        );
         throw fail(response.status, responseJson);
     }
 
     const parsed = guildsSchema.safeParse(responseJson);
     if (parsed.success) {
+        logger.info('fetchDiscordOAuthUserGuilds: successfully parsed discord user guilds');
         return parsed.data;
     }
 
-    logger.error(parsed.error);
+    logger.error(`fetchDiscordOAuthUserGuilds: Error - ${parsed.error}`);
     throw fail(400, { body: 'Failed to parse discord response' });
 }
