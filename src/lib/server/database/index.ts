@@ -1,8 +1,8 @@
+import Database from 'better-sqlite3';
+import { sql } from 'drizzle-orm';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
-import { sql } from 'drizzle-orm';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
-import Database from 'better-sqlite3';
 
 export const db: BetterSQLite3Database = drizzle(new Database('./data.db'));
 

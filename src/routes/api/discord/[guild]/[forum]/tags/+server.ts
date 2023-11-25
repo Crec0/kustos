@@ -1,7 +1,7 @@
-import { json, type RequestEvent } from '@sveltejs/kit';
-import { bot } from '$lib/server/discord/bot';
-import { ForumChannel } from 'discord.js';
 import { logger } from '$lib/server';
+import { bot } from '$lib/server/discord/bot';
+import { json, type RequestEvent } from '@sveltejs/kit';
+import { ForumChannel } from 'discord.js';
 
 export async function GET({ params }: RequestEvent): Promise<Response> {
     if (params.guild == null || params.forum == null) {

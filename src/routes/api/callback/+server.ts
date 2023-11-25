@@ -1,13 +1,13 @@
-import type { RequestEvent } from '@sveltejs/kit';
-import { fail, redirect } from '@sveltejs/kit';
 import { ISSUER } from '$env/static/private';
-import { SignJWT } from 'jose';
-import { fetchDiscordOAuthToken, fetchDiscordOAuthUser } from '$lib/server/discord/http';
 import { privateKey } from '$lib/server';
 import { db, tokensTable } from '$lib/server/database';
-import { epochSecondsAfter } from '$lib/server/utils/math';
-import { eq } from 'drizzle-orm';
+import { fetchDiscordOAuthToken, fetchDiscordOAuthUser } from '$lib/server/discord/http';
 import type { DiscordOAuth, DiscordUser } from '$lib/server/discord/schemas';
+import { epochSecondsAfter } from '$lib/server/utils/math';
+import type { RequestEvent } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
+import { SignJWT } from 'jose';
 
 async function getOAuthAndUser(event: RequestEvent) {
     const params = event.url.searchParams;

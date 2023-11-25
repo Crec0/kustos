@@ -1,7 +1,7 @@
-import { fail } from '@sveltejs/kit';
-import { discordOAuthSchema, discordUserSchema, guildsSchema } from '$lib/server/discord/schemas';
-import { logger } from '$lib/server';
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '$env/static/private';
+import { logger } from '$lib/server';
+import { discordOAuthSchema, discordUserSchema, guildsSchema } from '$lib/server/discord/schemas';
+import { fail } from '@sveltejs/kit';
 
 const DISCORD_API = 'https://discord.com/api/v10';
 const OAUTH_TOKEN = `${DISCORD_API}/oauth2/token`;

@@ -1,4 +1,4 @@
 <script lang="ts">
 </script>
 
-<div class="placeholder"> Editor </div>
+<div class="placeholder">Editor</div>

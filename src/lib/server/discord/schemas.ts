@@ -46,4 +46,4 @@ type DiscordOAuth = z.infer<typeof discordOAuthSchema>;
 type DiscordGuild = z.infer<typeof guildSchema>;
 type DiscordGuilds = z.infer<typeof guildsSchema>;
 
-export type { DiscordUser, DiscordOAuth, DiscordGuild, DiscordGuilds };
+export type { DiscordGuild, DiscordGuilds, DiscordOAuth, DiscordUser };

@@ -1,12 +1,13 @@
-import type { LayoutServerLoadEvent } from './$types';
-import type { UserObject } from '$lib/types';
 import { logger } from '$lib/server';
+import type { UserObject } from '$lib/types';
+import type { LayoutServerLoadEvent } from './$types';
 
 const defaultResponse: UserObject = {
+    accountSince: '',
     avatarUrl: '',
-    id: '',
-    creation: '',
     displayName: '',
+    id: '',
+    relativeAge: '',
     username: '',
 };
 

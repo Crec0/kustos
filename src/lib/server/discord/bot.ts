@@ -1,7 +1,7 @@
-import '@tsed/logger-file';
-import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 import { DISCORD_TOKEN } from '$env/static/private';
 import { logger } from '$lib/server';
+import '@tsed/logger-file';
+import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 
 export const bot = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],

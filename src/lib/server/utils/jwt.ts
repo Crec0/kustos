@@ -1,8 +1,8 @@
-import { type JWTPayload, jwtVerify, type JWTVerifyOptions, type JWTVerifyResult } from 'jose';
-import type { KeyObject } from 'crypto';
-import { publicKey } from '$lib/server';
 import { ISSUER } from '$env/static/private';
+import { publicKey } from '$lib/server';
 import type { Cookies } from '@sveltejs/kit';
+import type { KeyObject } from 'crypto';
+import { jwtVerify, type JWTPayload, type JWTVerifyOptions, type JWTVerifyResult } from 'jose';
 
 interface SessionJWT extends JWTPayload {
     userID: string;

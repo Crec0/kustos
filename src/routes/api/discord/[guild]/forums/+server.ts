@@ -1,5 +1,5 @@
-import { json, type RequestEvent } from '@sveltejs/kit';
 import { bot } from '$lib/server/discord/bot';
+import { json, type RequestEvent } from '@sveltejs/kit';
 import { ForumChannel } from 'discord.js';
 
 export async function GET({ params }: RequestEvent): Promise<Response> {

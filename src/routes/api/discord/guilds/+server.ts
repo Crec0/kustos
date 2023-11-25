@@ -1,8 +1,6 @@
-import { json, type RequestEvent } from '@sveltejs/kit';
 import { db, tokensTable } from '$lib/server/database';
+import { json, type RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import { fetchDiscordOAuthUserGuilds } from '$lib/server/discord/http';
-import { bot } from '$lib/server/discord/bot';
 
 export async function GET({ cookies, request: { headers } }: RequestEvent): Promise<Response> {
     const userID = headers.get('x-user-id');

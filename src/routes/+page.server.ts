@@ -1,7 +1,7 @@
-import type { Actions } from './$types';
-import { redirect } from '@sveltejs/kit';
-import { discordOAuthURL } from '$lib/server/discord/http';
 import { logger } from '$lib/server';
+import { discordOAuthURL } from '$lib/server/discord/http';
+import { redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export const actions: Actions = {
     login: ({ url: { searchParams } }) => {
