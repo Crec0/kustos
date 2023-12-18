@@ -5,7 +5,7 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 
 const isProtectedRoute = (route: string) => {
-    return route.startsWith('/editor') && route.startsWith('/api') && route !== '/api/callback';
+    return route.startsWith('/editor') || (route.startsWith('/api') && route !== '/api/callback');
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -14,7 +14,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         logger.debug('JWT verification failed. Checking protected route');
         if (event.route.id == null || isProtectedRoute(event.route.id)) {
             logger.warn('Protected route or id is null. Redirecting...');
-            throw redirect(302, constructRedirectURL(event.route.id, event.url.searchParams));
+            redirect(307, constructRedirectURL(event.route.id, event.url.searchParams));
         }
         logger.debug('JWT verification failed. Route is unprotected');
     } else {

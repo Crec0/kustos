@@ -4,7 +4,7 @@ import { db, tokensTable } from '$lib/server/database';
 import { fetchDiscordOAuthToken, fetchDiscordOAuthUser } from '$lib/server/discord/http';
 import type { DiscordOAuth, DiscordUser } from '$lib/server/discord/schemas';
 import { epochSecondsAfter } from '$lib/server/utils/math';
-import type { RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent, RequestHandler } from '@sveltejs/kit';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { SignJWT } from 'jose';
@@ -62,7 +62,7 @@ function setJWTCookie(event: RequestEvent, jwt: string) {
     });
 }
 
-export async function GET(event: RequestEvent): Promise<Response> {
+export const GET: RequestHandler = async (event: RequestEvent) => {
     const { oAuth, user } = await getOAuthAndUser(event);
     const expireTime = epochSecondsAfter(oAuth.expires_in);
 
@@ -71,5 +71,5 @@ export async function GET(event: RequestEvent): Promise<Response> {
     const jwt = await generateJWT(user.id, expireTime);
     setJWTCookie(event, jwt);
 
-    throw redirect(301, '/');
-}
+    redirect(301, '/');
+};

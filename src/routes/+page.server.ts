@@ -5,11 +5,11 @@ import type { Actions } from './$types';
 
 export const actions: Actions = {
     login: ({ url: { searchParams } }) => {
-        throw redirect(301, discordOAuthURL(searchParams));
+        redirect(301, discordOAuthURL(searchParams));
     },
     logout: ({ cookies }) => {
         logger.info('Yeeting cookies');
-        cookies.delete('session_token');
-        throw redirect(303, '/');
+        cookies.delete('session_token', { path: '/' });
+        redirect(303, '/');
     },
 };
