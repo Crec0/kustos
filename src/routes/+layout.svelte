@@ -7,6 +7,7 @@
         AppShell,
         Avatar,
         initializeStores,
+        Modal,
         TabAnchor,
         TabGroup,
         Toast,
@@ -23,6 +24,7 @@
 </script>
 
 <Toast />
+<Modal />
 
 <AppShell>
     <svelte:fragment slot="header">
@@ -64,7 +66,7 @@
                     title="Account"
                 >
                     <svelte:fragment slot="lead">
-                        <Avatar width="w-10" src={Github} />
+                        <Avatar src={Github} width="w-10" />
                     </svelte:fragment>
                 </AppRailAnchor>
             </svelte:fragment>

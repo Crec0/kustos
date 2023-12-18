@@ -1,6 +1,8 @@
 <script lang="ts">
-    import { readable, writable } from 'svelte/store';
+    import { derived, readable, writable } from 'svelte/store';
     import { onMount } from 'svelte';
+    import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+    import { XIcon, InfoIcon } from 'lucide-svelte';
 
     type NameIdObject = {
         name: string;
@@ -85,114 +87,240 @@
         const idx = $selectedTagIds.indexOf(elem.value);
         if (idx > -1) {
             $selectedTagIds.splice(idx, 1);
-            elem.nextElementSibling?.classList.remove('bg-secondary', 'text-content-secondary');
-            elem.nextElementSibling?.classList.add('bg-accent', 'text-content');
+            elem.nextElementSibling?.classList.remove('variant-filled-secondary');
+            elem.nextElementSibling?.classList.add('variant-filled-primary');
         }
 
         if (elem.checked) {
             $selectedTagIds.push(elem.value);
-            elem.nextElementSibling?.classList.remove('bg-accent', 'text-content');
-            elem.nextElementSibling?.classList.add('bg-secondary', 'text-content-secondary');
+            elem.nextElementSibling?.classList.add('variant-filled-secondary');
+            elem.nextElementSibling?.classList.remove('variant-filled-primary');
         }
     }
+
+    let files = writable<FileList | undefined>();
+    let images = writable<FileList | undefined>();
+
+    const filesStore = derived<typeof files, File[]>(
+        files,
+        (fileList, set) => {
+            console.log(fileList);
+            const filez: File[] = $filesStore || [];
+            for (let i = 0; fileList != null && i < fileList.length; i++) {
+                const file = fileList.item(i);
+                if (file == null) {
+                    continue;
+                }
+                const idx = filez.indexOf(file);
+                if (idx === -1) {
+                    filez.push(file);
+                } else {
+                    filez[idx] = file;
+                }
+            }
+            set(filez);
+        },
+        [],
+    );
+
+    const imageStore = derived<typeof images, File[]>(
+        images,
+        (imageList, set) => {
+            const imagez: File[] = $imageStore || [];
+            for (let i = 0; imageList != null && i < imageList.length; i++) {
+                const image = imageList.item(i);
+                if (image == null) {
+                    continue;
+                }
+                const idx = imagez.indexOf(image);
+                if (idx === -1) {
+                    imagez.push(image);
+                } else {
+                    imagez[idx] = image;
+                }
+            }
+            set(imagez);
+        },
+        [],
+    );
+
+    function deleteFile(e: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+        const curr = e.currentTarget;
+        const fileName = curr.previousElementSibling?.firstChild?.textContent;
+        if (fileName == null) {
+            return;
+        }
+
+        const idx = $filesStore.findIndex((file) => file.name === fileName);
+        $filesStore.splice(idx, 1);
+
+        curr.parentElement?.remove();
+    }
+
+    const modalStore = getModalStore();
+
+    const modal: ModalSettings = {
+        type: 'alert',
+        title: 'Dont see your guild listed?',
+        body: 'Make sure your guild has the bot as well as is whitelisted.',
+    };
 </script>
 
-<div>
-    <div class="flex">
-        <div class="flex items-center rounded-lg bg-primary px-3 py-2 text-2xl">
-            <label class="mr-2 grow text-content" for="guild-select">Guild:</label>
-            <select
-                class="rounded bg-secondary px-3 py-2 text-lg font-semibold text-content-secondary"
-                id="guild-select"
-                on:change={onGuildSelection}
-            >
-                <option disabled hidden selected value="">Select Guild</option>
-                {#each $guilds as guild, idx (idx)}
-                    <option class="text-xl font-semibold" value={guild.id}>
-                        {guild.name}
-                    </option>
-                {/each}
-            </select>
-        </div>
-        <div
-            class="ml-2 flex items-center rounded-lg bg-primary px-3 py-2 text-2xl text-content-secondary"
-        >
-            <label class="mr-2 grow text-content" for="guild-select">Channel:</label>
-            <select
-                class="rounded bg-secondary px-3 py-2 text-lg font-semibold text-content-secondary"
-                id="guild-select"
-                on:change={onChannelSelection}
-            >
-                <option disabled hidden selected value="">Select Channel</option>
-                {#each $channels as channel, idx (idx)}
-                    <option class="text-xl font-semibold" value={channel.id}>
-                        {channel.name}
-                    </option>
-                {/each}
-            </select>
-        </div>
-    </div>
-    <div class="mt-2 flex w-max items-center rounded-lg bg-primary px-3 py-2 text-2xl">
-        <label class="mr-2 grow text-content" for="guild-select">Tags:</label>
-
-        {#each $availableTags as tag, idx (idx)}
-            <input
-                class="hidden"
-                id="tag-{tag.id}"
-                type="checkbox"
-                value={tag.id}
-                on:change={onTagSelect}
-            />
-            <label
-                for="tag-{tag.id}"
-                class="m-2 rounded bg-accent p-2 text-xl font-semibold text-content"
-                >{tag.name}</label
-            >
-        {/each}
-    </div>
-
-    <div class="flex gap-2">
-        <div class="mt-2 flex w-1/2 flex-col gap-2 rounded-lg bg-primary px-3 py-2 text-2xl">
-            <div class="relative mt-9">
-                <label for="archive-name" class="text-md absolute -translate-y-7 text-lg"
-                    >Name</label
+<div class="my-20">
+    <div class="bg-primary-900 p-2 md:p-6 rounded-lg w-[48rem] mx-4">
+        <div class="flex flex-col md:flex-row">
+            <div class="flex items-center rounded-lg px-3 py-2">
+                <label class="mr-2 grow font-semibold" for="guild-select">Guild:</label>
+                <select
+                    class="rounded variant-filled-primary px-3 py-2"
+                    id="guild-select"
+                    on:change={onGuildSelection}
                 >
+                    <option disabled hidden selected value="">Select Guild</option>
+                    {#each $guilds as guild, idx (idx)}
+                        <option value={guild.id}>
+                            {guild.name}
+                        </option>
+                    {/each}
+                </select>
+                <!--Info Popup -->
+                <button
+                    class="ml-2"
+                    on:click={(e) => {
+                        modalStore.trigger(modal);
+                    }}
+                    tabindex="0"
+                >
+                    <InfoIcon size={24} strokeWidth={2} />
+                </button>
+            </div>
+            <div class="md:ml-2 flex items-center rounded-lg px-3 py-2">
+                <label class="mr-2 grow font-semibold" for="guild-select">Channel:</label>
+                <select
+                    class="rounded variant-filled-primary px-3 py-2"
+                    id="guild-select"
+                    on:change={onChannelSelection}
+                >
+                    <option disabled hidden selected value="">Select Channel</option>
+                    {#each $channels as channel, idx (idx)}
+                        <option value={channel.id}>
+                            {channel.name}
+                        </option>
+                    {/each}
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-2 flex w-full items-center rounded-lg bg-primary px-3 py-2">
+            <label class="mr-2 font-semibold" for="guild-select">Tags:</label>
+
+            {#if $availableTags.length === 0}
+                <div class="placeholder w-full animate-pulse variant-filled-primary p-6" />
+            {/if}
+
+            <div class="flex flex-wrap w-full">
+                {#each $availableTags as tag, idx (idx)}
+                    <input
+                        class="hidden"
+                        id="tag-{tag.id}"
+                        type="checkbox"
+                        value={tag.id}
+                        on:change={onTagSelect}
+                    />
+                    <label for="tag-{tag.id}" class="m-1 rounded variant-filled-primary p-2">
+                        {tag.name}
+                    </label>
+                {/each}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-2 bg-primary-900 p-2 md:p-6 rounded-lg w-[48rem] mx-4">
+        <div class="flex flex-col gap-2 rounded-lg bg-primary px-3 py-2">
+            <div class="relative mt-9">
+                <label class="text-md absolute -translate-y-7" for="archive-name"> Name </label>
                 <input
+                    class="w-full rounded variant-filled-primary px-3 py-2"
                     id="archive-name"
                     type="text"
-                    class="w-full rounded bg-accent px-3 py-2 text-2xl"
                 />
             </div>
 
             <div class="relative mt-9">
-                <label for="archive-credits" class="text-md absolute -translate-y-7 text-lg"
-                    >Credits</label
-                >
+                <label class="text-md absolute -translate-y-7" for="archive-credits">
+                    Credits
+                </label>
                 <input
+                    class="w-full rounded variant-filled-primary px-3 py-2"
                     id="archive-name"
                     type="text"
-                    class="w-full rounded bg-accent px-3 py-2 text-2xl"
                 />
             </div>
 
             <div class="relative mt-9">
-                <label for="archive-description" class="text-md absolute -translate-y-7 text-lg"
-                    >Description</label
-                >
+                <label class="text-md absolute -translate-y-7" for="archive-name"> Version </label>
+                <input
+                    class="w-full rounded variant-filled-primary px-3 py-2"
+                    id="archive-name"
+                    type="text"
+                />
+            </div>
+
+            <div class="relative mt-9">
+                <label class="text-md absolute -translate-y-7" for="archive-description">
+                    Description
+                </label>
                 <textarea
+                    class="w-full rounded variant-filled-primary px-3 py-2"
                     id="archive-description"
-                    class="w-full rounded bg-accent px-3 py-2 text-2xl"
+                    rows="10"
                 />
             </div>
 
-            <div>
-                <label for="archive-files">Files:</label>
-                <input id="archive-files" type="file" />
-            </div>
-        </div>
+            <FileDropzone
+                accept=".png,.jpg,.jpeg,.webp"
+                bind:files={$images}
+                class="w-full"
+                multiple
+                name="images"
+            >
+                <svelte:fragment slot="message">Image(s)</svelte:fragment>
+            </FileDropzone>
+            {#each $imageStore as image}
+                <div class="px-3 py-1 rounded variant-filled-primary flex items-center w-full">
+                    <img src={URL.createObjectURL(image)} alt={image.name} />
+                    <button
+                        class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 py-2"
+                        on:click={deleteFile}
+                    >
+                        <XIcon />
+                    </button>
+                </div>
+            {/each}
 
-        <div class="mt-2 flex w-1/2 flex-col gap-2 rounded-lg bg-primary px-3 py-2 text-2xl">
-            <div class=""> </div>
+            <FileDropzone
+                accept=".litematic,.schem,.bp"
+                bind:files={$files}
+                class="w-full"
+                multiple
+                name="schematics"
+            >
+                <svelte:fragment slot="message">Litematic(s)</svelte:fragment>
+            </FileDropzone>
+
+            {#each $filesStore as file}
+                <div class="px-3 py-1 rounded variant-filled-primary flex items-center w-full">
+                    <span class="grow text-ellipsis whitespace-nowrap overflow-clip">
+                        {file.name}
+                    </span>
+                    <button
+                        class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 py-2"
+                        on:click={deleteFile}
+                    >
+                        <XIcon />
+                    </button>
+                </div>
+            {/each}
         </div>
     </div>
 </div>
