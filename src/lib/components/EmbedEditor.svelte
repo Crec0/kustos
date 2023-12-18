@@ -3,6 +3,7 @@
     import { onMount } from 'svelte';
     import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
     import { XIcon, InfoIcon } from 'lucide-svelte';
+    import FileInput from '$components/FileInput.svelte';
 
     type NameIdObject = {
         name: string;
@@ -96,65 +97,6 @@
             elem.nextElementSibling?.classList.add('variant-filled-secondary');
             elem.nextElementSibling?.classList.remove('variant-filled-primary');
         }
-    }
-
-    let files = writable<FileList | undefined>();
-    let images = writable<FileList | undefined>();
-
-    const filesStore = derived<typeof files, File[]>(
-        files,
-        (fileList, set) => {
-            console.log(fileList);
-            const filez: File[] = $filesStore || [];
-            for (let i = 0; fileList != null && i < fileList.length; i++) {
-                const file = fileList.item(i);
-                if (file == null) {
-                    continue;
-                }
-                const idx = filez.indexOf(file);
-                if (idx === -1) {
-                    filez.push(file);
-                } else {
-                    filez[idx] = file;
-                }
-            }
-            set(filez);
-        },
-        [],
-    );
-
-    const imageStore = derived<typeof images, File[]>(
-        images,
-        (imageList, set) => {
-            const imagez: File[] = $imageStore || [];
-            for (let i = 0; imageList != null && i < imageList.length; i++) {
-                const image = imageList.item(i);
-                if (image == null) {
-                    continue;
-                }
-                const idx = imagez.indexOf(image);
-                if (idx === -1) {
-                    imagez.push(image);
-                } else {
-                    imagez[idx] = image;
-                }
-            }
-            set(imagez);
-        },
-        [],
-    );
-
-    function deleteFile(e: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
-        const curr = e.currentTarget;
-        const fileName = curr.previousElementSibling?.firstChild?.textContent;
-        if (fileName == null) {
-            return;
-        }
-
-        const idx = $filesStore.findIndex((file) => file.name === fileName);
-        $filesStore.splice(idx, 1);
-
-        curr.parentElement?.remove();
     }
 
     const modalStore = getModalStore();
@@ -277,50 +219,8 @@
                 />
             </div>
 
-            <FileDropzone
-                accept=".png,.jpg,.jpeg,.webp"
-                bind:files={$images}
-                class="w-full"
-                multiple
-                name="images"
-            >
-                <svelte:fragment slot="message">Image(s)</svelte:fragment>
-            </FileDropzone>
-            {#each $imageStore as image}
-                <div class="px-3 py-1 rounded variant-filled-primary flex items-center w-full">
-                    <img src={URL.createObjectURL(image)} alt={image.name} />
-                    <button
-                        class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 py-2"
-                        on:click={deleteFile}
-                    >
-                        <XIcon />
-                    </button>
-                </div>
-            {/each}
-
-            <FileDropzone
-                accept=".litematic,.schem,.bp"
-                bind:files={$files}
-                class="w-full"
-                multiple
-                name="schematics"
-            >
-                <svelte:fragment slot="message">Litematic(s)</svelte:fragment>
-            </FileDropzone>
-
-            {#each $filesStore as file}
-                <div class="px-3 py-1 rounded variant-filled-primary flex items-center w-full">
-                    <span class="grow text-ellipsis whitespace-nowrap overflow-clip">
-                        {file.name}
-                    </span>
-                    <button
-                        class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 py-2"
-                        on:click={deleteFile}
-                    >
-                        <XIcon />
-                    </button>
-                </div>
-            {/each}
+            <FileInput accept=".png,.jpg,.jpeg,.webp" />
+            <FileInput accept=".litematic" />
         </div>
     </div>
 </div>
