@@ -1,4 +1,5 @@
 <script lang="ts">
+    import EmbedEditor from '$components/EmbedEditor.svelte';
 </script>
 
-<div class="placeholder">Editor</div>
+<EmbedEditor />
