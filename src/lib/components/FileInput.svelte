@@ -5,6 +5,7 @@
 
     export let accept: string | undefined;
     export let isImage: boolean = false;
+    export let body: string;
 
     type MaybeFileList = FileList | undefined;
 
@@ -53,27 +54,31 @@
     multiple
     name="schematics"
 >
-    <svelte:fragment slot="message">Litematic(s)</svelte:fragment>
+    <svelte:fragment slot="message">{body}</svelte:fragment>
 </FileDropzone>
 
-{#each $fileStore.entries() as [key, file]}
-    <div
-        class="px-3 py-1 rounded variant-filled-primary flex items-center w-full"
-        data-file-key={key}
-    >
-        {#if isImage}
-            <img src={URL.createObjectURL(file)} alt={file.name} />
-        {:else}
-            <span class="grow text-ellipsis whitespace-nowrap overflow-clip">
-                {file.name}
-            </span>
-        {/if}
-
-        <button
-            class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 py-2"
-            on:click={handleDelete}
+<div class={`flex gap-2 ${isImage ? 'flex-row flex-wrap' : 'flex-col'}`}>
+    {#each $fileStore.entries() as [key, file] (key)}
+        <div
+            class={`p-2 rounded variant-filled-primary flex gap-2 items-center ${
+                isImage ? 'w-max' : 'w-full'
+            }`}
+            data-file-key={key}
         >
-            <XIcon />
-        </button>
-    </div>
-{/each}
+            {#if isImage}
+                <img src={URL.createObjectURL(file)} alt={file.name} class="max-h-[160px]" />
+            {:else}
+                <span class="grow text-ellipsis whitespace-nowrap overflow-clip">
+                    {file.name}
+                </span>
+            {/if}
+
+            <button
+                class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 p-2"
+                on:click={handleDelete}
+            >
+                <XIcon />
+            </button>
+        </div>
+    {/each}
+</div>

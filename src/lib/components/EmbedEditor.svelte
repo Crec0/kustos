@@ -177,7 +177,9 @@
         </div>
     </div>
 
-    <div class="mt-2 bg-primary-900 p-2 md:p-6 rounded-lg w-[48rem] mx-4">
+    <div
+        class="mt-2 bg-primary-900 p-2 md:p-6 rounded-lg w-[48rem] mx-4 selection:bg-primary-50-900-token"
+    >
         <div class="flex flex-col gap-2 rounded-lg bg-primary px-3 py-2">
             <div class="relative mt-9">
                 <label class="text-md absolute -translate-y-7" for="archive-name"> Name </label>
@@ -219,8 +221,8 @@
                 />
             </div>
 
-            <FileInput accept=".png,.jpg,.jpeg,.webp" />
-            <FileInput accept=".litematic" />
+            <FileInput body="Add image(s)" accept=".png,.jpg,.jpeg,.webp" isImage={true} />
+            <FileInput body="Add litematic(s)" accept=".litematic" />
         </div>
     </div>
 </div>
