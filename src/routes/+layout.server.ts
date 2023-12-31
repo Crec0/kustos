@@ -15,7 +15,7 @@ export async function load({
     request: { headers },
     fetch,
 }: LayoutServerLoadEvent): Promise<UserObject> {
-    const userID = headers.get('x-user-id');
+    const userID = headers.get('discord-user-id');
     if (userID == null) {
         return defaultResponse;
     }

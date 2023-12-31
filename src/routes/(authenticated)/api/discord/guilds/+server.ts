@@ -1,9 +1,11 @@
 import { db, tokensTable } from '$lib/server/database';
+import { bot } from '$lib/server/discord/bot';
+import { fetchDiscordOAuthUserGuilds } from '$lib/server/discord/http';
 import { json, type RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export async function GET({ cookies, request: { headers } }: RequestEvent): Promise<Response> {
-    const userID = headers.get('x-user-id');
+    const userID = headers.get('discord-user-id');
     if (userID == null) {
         return json([]);
     }

@@ -3,7 +3,7 @@ const GENERIC_NOT_LOGGED_IN_MESSAGE =
 
 export function constructRedirectURL(
     route: string | null,
-    params: URLSearchParams,
+    params: URLSearchParams = new URLSearchParams(),
     message: string = GENERIC_NOT_LOGGED_IN_MESSAGE,
 ): string {
     let redirect: string;
@@ -14,7 +14,7 @@ export function constructRedirectURL(
     } else {
         params.set('message', message);
         params.set('goto', route.slice(1));
-        redirect = `/login?${params}`;
+        redirect = `/auth/login?${params}`;
     }
 
     return redirect;
