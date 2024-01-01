@@ -42,7 +42,7 @@
     </svelte:fragment>
 
     <svelte:fragment slot="sidebarLeft">
-        <AppRail class="hidden md:grid">
+        <AppRail class="hidden md:flex md:flex-col">
             <AppRailAnchor href="/" selected={$page.url.pathname === '/'}>
                 <span class="text-lg">Home</span>
             </AppRailAnchor>
