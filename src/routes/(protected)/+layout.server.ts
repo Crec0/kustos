@@ -10,5 +10,5 @@ export const load: LayoutServerLoad = async ({ url: { pathname }, request: { hea
         error(403, 'Cannot access api without logging in.');
     }
 
-    redirect(303, constructRedirectURL(pathname));
+    redirect(301, constructRedirectURL(pathname));
 };
