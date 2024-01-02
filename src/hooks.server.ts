@@ -4,7 +4,7 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
     const userId = await verifyJWTAndGetUserID(event.cookies);
-    // Delete the internal header in case someone tries to be funny.
+    // Delete the header in case someone tries to be funny.
     event.request.headers.delete('discord-user-id');
     if (userId != null) {
         logger.debug('JWT verification passed. Setting discord-user-id header');
@@ -13,11 +13,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     return resolve(event);
 };
 
-export const handleError: HandleServerError = ({ error, event }) => {
+export const handleError: HandleServerError = ({ error }) => {
     logger.error(error);
-    return {
-        message: error as string,
-        // @ts-ignore
-        code: error?.code ?? 'UNKNOWN',
-    };
 };
