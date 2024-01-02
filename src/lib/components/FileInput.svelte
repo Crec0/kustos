@@ -1,7 +1,7 @@
 <script lang="ts">
     import { derived, writable } from 'svelte/store';
-    import { FileDropzone } from '@skeletonlabs/skeleton';
-    import { XIcon } from 'lucide-svelte';
+    import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+    import { ViewIcon, XIcon } from 'lucide-svelte';
 
     export let accept: string | undefined;
     export let isImage: boolean = false;
@@ -11,6 +11,18 @@
 
     let inputFileList = writable<MaybeFileList>(undefined);
     let inputElement: HTMLInputElement | undefined = undefined;
+
+    const modalStore = getModalStore();
+
+    const imageModal = (img: HTMLImageElement) => {
+        const modal: ModalSettings = {
+            type: 'alert',
+            image: img.src,
+            modalClasses: 'bg-surface-300-600-token',
+        };
+
+        modalStore.trigger(modal);
+    };
 
     const fileStore = derived<typeof inputFileList, Map<string, File>>(
         inputFileList,
@@ -33,7 +45,7 @@
     );
 
     function handleDelete(e: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
-        const parent = e.currentTarget.parentElement;
+        const parent = e.currentTarget.parentElement?.parentElement;
         if (parent == null) return;
 
         const key = parent.dataset.fileKey;
@@ -72,13 +84,28 @@
                     {file.name}
                 </span>
             {/if}
-
-            <button
-                class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 p-2"
-                on:click={handleDelete}
-            >
-                <XIcon />
-            </button>
+            <div class="flex flex-col gap-4">
+                <button
+                    class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 p-2"
+                    on:click={handleDelete}
+                >
+                    <XIcon />
+                </button>
+                {#if isImage}
+                    <button
+                        class="chip rounded variant-ghost-primary hover:variant-filled-secondary duration-100 p-2"
+                        on:click={(e) => {
+                            const imgElement =
+                                e.currentTarget.parentElement?.previousElementSibling;
+                            if (imgElement && imgElement instanceof HTMLImageElement) {
+                                imageModal(imgElement);
+                            }
+                        }}
+                    >
+                        <ViewIcon />
+                    </button>
+                {/if}
+            </div>
         </div>
     {/each}
 </div>
