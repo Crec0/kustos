@@ -28,7 +28,7 @@
 
 <AppShell>
     <svelte:fragment slot="header">
-        <AppBar gap="gap-0 md:gap-4">
+        <AppBar gap="gap-0 md:gap-4 md">
             <svelte:fragment slot="lead">
                 <img alt="Icon" class="w-12" src={Img} />
             </svelte:fragment>
@@ -47,17 +47,19 @@
                 <span class="text-lg">Home</span>
             </AppRailAnchor>
 
-            <AppRailAnchor href="/user" selected={$page.url.pathname === '/user'}>
-                <span class="text-lg">User</span>
-            </AppRailAnchor>
-
             <AppRailAnchor href="/archive" selected={$page.url.pathname === '/archive'}>
                 <span class="text-lg">Archive</span>
             </AppRailAnchor>
 
-            <AppRailAnchor href="/editor" selected={$page.url.pathname === '/editor'}>
-                <span class="text-lg">Editor</span>
-            </AppRailAnchor>
+            {#if data.id}
+                <AppRailAnchor href="/user" selected={$page.url.pathname === '/user'}>
+                    <span class="text-lg">User</span>
+                </AppRailAnchor>
+
+                <AppRailAnchor href="/editor" selected={$page.url.pathname === '/editor'}>
+                    <span class="text-lg">Editor</span>
+                </AppRailAnchor>
+            {/if}
 
             <svelte:fragment slot="trail">
                 <AppRailAnchor
@@ -73,7 +75,7 @@
         </AppRail>
     </svelte:fragment>
 
-    <div class="flex justify-center">
+    <div class="flex justify-center mt-10">
         <slot />
     </div>
 
@@ -96,9 +98,11 @@
             <TabAnchor href="/archive" selected={$page.url.pathname === '/archive'}>
                 <span>Archive</span>
             </TabAnchor>
-            <TabAnchor href="/editor" selected={$page.url.pathname === '/editor'}>
-                <span>Editor</span>
-            </TabAnchor>
+            {#if data.id}
+                <TabAnchor href="/editor" selected={$page.url.pathname === '/editor'}>
+                    <span>Editor</span>
+                </TabAnchor>
+            {/if}
         </TabGroup>
     </svelte:fragment>
 </AppShell>
