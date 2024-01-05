@@ -3,28 +3,17 @@
     import { FileDropzone, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
     import { ViewIcon, XIcon } from 'lucide-svelte';
 
-    export let accept: string | undefined;
-    export let isImage: boolean = false;
-    export let body: string;
-
     type MaybeFileList = FileList | undefined;
+    type ButtonClickEvent = MouseEvent & { currentTarget: EventTarget & HTMLButtonElement };
 
-    let inputFileList = writable<MaybeFileList>(undefined);
+    export let accept: string;
+    export let body: string;
+    export let isImage: boolean = false;
+
+    const inputFileList = writable<MaybeFileList>(undefined);
     let inputElement: HTMLInputElement | undefined = undefined;
 
-    const modalStore = getModalStore();
-
-    const imageModal = (img: HTMLImageElement) => {
-        const modal: ModalSettings = {
-            type: 'alert',
-            image: img.src,
-            modalClasses: 'bg-surface-300-600-token',
-        };
-
-        modalStore.trigger(modal);
-    };
-
-    const fileStore = derived<typeof inputFileList, Map<string, File>>(
+    export const fileStore = derived<typeof inputFileList, Map<string, File>>(
         inputFileList,
         (fileList, _, update) => {
             if (fileList == undefined) return;
@@ -44,7 +33,14 @@
         new Map(),
     );
 
-    function handleDelete(e: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+    const handleViewButton = (e: ButtonClickEvent) => {
+        const imgElement = e.currentTarget.parentElement?.previousElementSibling;
+        if (imgElement && imgElement instanceof HTMLImageElement) {
+            imageModal(imgElement);
+        }
+    };
+
+    function handleDeleteButton(e: ButtonClickEvent) {
         const parent = e.currentTarget.parentElement?.parentElement;
         if (parent == null) return;
 
@@ -56,6 +52,17 @@
 
         parent.remove();
     }
+
+    const modalStore = getModalStore();
+    const imageModal = (img: HTMLImageElement) => {
+        const modal: ModalSettings = {
+            type: 'alert',
+            image: img.src,
+            modalClasses: 'bg-surface-300-600-token',
+        };
+
+        modalStore.trigger(modal);
+    };
 </script>
 
 <FileDropzone
@@ -87,20 +94,14 @@
             <div class="flex flex-col gap-4">
                 <button
                     class="chip rounded variant-ghost-primary hover:variant-filled-error duration-100 p-2"
-                    on:click={handleDelete}
+                    on:click={handleDeleteButton}
                 >
                     <XIcon />
                 </button>
                 {#if isImage}
                     <button
                         class="chip rounded variant-ghost-primary hover:variant-filled-secondary duration-100 p-2"
-                        on:click={(e) => {
-                            const imgElement =
-                                e.currentTarget.parentElement?.previousElementSibling;
-                            if (imgElement && imgElement instanceof HTMLImageElement) {
-                                imageModal(imgElement);
-                            }
-                        }}
+                        on:click={handleViewButton}
                     >
                         <ViewIcon />
                     </button>
