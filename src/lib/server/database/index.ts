@@ -1,24 +1,15 @@
 import Database from 'better-sqlite3';
-import { sql } from 'drizzle-orm';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+
+import { logger } from '$lib/server';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import { blobs, blobsRelations, posts, tokens } from './schema';
 
-export const db: BetterSQLite3Database = drizzle(new Database('./data.db'));
+const sqliteDB = new Database('./data.db');
+const db = drizzle(sqliteDB, { schema: { posts, tokens, blobs, blobsRelations } });
 
-db.run(sql`
-    CREATE TABLE IF NOT EXISTS tokens
-    (
-        user_id       TEXT PRIMARY KEY UNIQUE,
-        access_token  TEXT UNIQUE,
-        refresh_token TEXT UNIQUE,
-        token_expiry  INTEGER
-    );
-`);
+logger.info('Running migrations...');
+migrate(db, { migrationsFolder: 'drizzle' });
+logger.info('Migrations complete');
 
-export const tokensTable = sqliteTable('tokens', {
-    user_id: text('user_id').primaryKey().unique(),
-    access_token: text('access_token').unique(),
-    refresh_token: text('refresh_token').unique(),
-    token_expiry: integer('token_expiry'),
-});
+export { blobs, db, posts, tokens };
