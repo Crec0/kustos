@@ -23,7 +23,7 @@
     initializeStores();
 </script>
 
-<Toast />
+<Toast position="br" />
 <Modal />
 
 <AppShell>
@@ -33,7 +33,7 @@
                 <img alt="Icon" class="w-12" src={Img} />
             </svelte:fragment>
 
-            <div class="text-2xl hidden md:block font-semibold">Kustos</div>
+            <div class="hidden text-2xl font-semibold md:block">Kustos</div>
 
             <svelte:fragment slot="trail">
                 <LoginLogout user={data} />
@@ -75,7 +75,7 @@
         </AppRail>
     </svelte:fragment>
 
-    <div class="flex justify-center mt-10">
+    <div class="mt-10 flex justify-center">
         <slot />
     </div>
 
