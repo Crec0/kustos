@@ -1,5 +1,5 @@
+import type { UserObject } from '$lib/schema';
 import { logger } from '$lib/server';
-import type { UserObject } from '$lib/types';
 import type { LayoutServerLoadEvent } from './$types';
 
 const defaultResponse: UserObject = {
