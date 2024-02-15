@@ -1,18 +1,16 @@
-import { db, tokensTable } from '$lib/server/database';
-import { bot } from '$lib/server/discord/bot';
-import { fetchDiscordOAuthUserGuilds } from '$lib/server/discord/http';
-import { json, type RequestEvent } from '@sveltejs/kit';
+import { db, tokens } from '$lib/server/database';
+import { error, json } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
-export async function GET({ cookies, request: { headers } }: RequestEvent): Promise<Response> {
+export const GET = async ({ request: { headers } }): Promise<Response> => {
     const userID = headers.get('discord-user-id');
     if (userID == null) {
-        return json([]);
+        error(403, 'Cannot access guild resource without logging in');
     }
 
-    const token = db.select().from(tokensTable).where(eq(tokensTable.user_id, userID)).get();
-    if (token == null || token.access_token == null) {
-        return json([]);
+    const token = await db.query.tokens.findFirst({ where: eq(tokens.userID, userID) });
+    if (token == null || token.accessToken == null) {
+        error(403, 'No data found. please re-log');
     }
 
     const guilds = await fetchDiscordOAuthUserGuilds('Bearer', token.access_token);
