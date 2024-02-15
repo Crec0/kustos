@@ -1,5 +1,3 @@
-import { logger } from '$lib/server';
-
 export type Success<T> = {
     success: true;
     value: T;
@@ -20,7 +18,6 @@ export const safeAwait = async <T>(promise: Promise<T>): Promise<Result<T>> => {
         if (e instanceof Error) {
             return { success: false, error: e.message };
         }
-        logger.error(e);
         return {
             success: false,
             error: 'Unknown error occurred. Please check the logs for more information.',

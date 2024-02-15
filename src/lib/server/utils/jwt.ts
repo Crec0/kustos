@@ -1,6 +1,6 @@
 import { ISSUER } from '$env/static/private';
 import { publicKey } from '$lib/server';
-import { safeAwait, type Failure } from '$lib/server/utils/type-utils';
+import { safeAwait, type Failure } from '$lib/utils/safeAwait';
 import type { Cookies } from '@sveltejs/kit';
 import { jwtVerify, type JWTPayload } from 'jose';
 
