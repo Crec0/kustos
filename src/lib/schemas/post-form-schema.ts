@@ -1,23 +1,5 @@
 import { z } from 'zod';
 
-export type UserObject = {
-    id: string;
-    displayName: string;
-    username: string;
-    avatarUrl: string;
-    accountSince: string;
-    relativeAge: string;
-};
-
-export type NameIdObject = {
-    name: string;
-    id: string;
-};
-
-export type Guild = NameIdObject;
-export type Channel = NameIdObject;
-export type Tag = NameIdObject;
-
 export const postForm = z.object({
     guild: z.string(),
     channel: z.string(),

@@ -1,4 +1,4 @@
-import type { UserObject } from '$lib/schema';
+import type { UserObject } from '$lib/schemas/discord-schema';
 import { logger } from '$lib/server';
 import type { LayoutServerLoadEvent } from './$types';
 
@@ -11,10 +11,7 @@ const defaultResponse: UserObject = {
     username: '',
 };
 
-export async function load({
-    request: { headers },
-    fetch,
-}: LayoutServerLoadEvent): Promise<UserObject> {
+export async function load({ request: { headers }, fetch }: LayoutServerLoadEvent): Promise<UserObject> {
     const userID = headers.get('discord-user-id');
     if (userID == null) {
         return defaultResponse;
