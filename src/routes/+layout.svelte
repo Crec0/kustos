@@ -21,8 +21,8 @@
         <LoginLogout slot="trail" user={data} />
     </AppBar>
 
-    <AppRail slot="sidebarLeft" class="hidden md:flex md:flex-col">
-        <AppRailAnchor href="/" selected={$page.url.pathname === '/'}>
+    <AppRail slot="sidebarLeft" class="hidden md:grid">
+        <AppRailAnchor slot="lead" href="/" selected={$page.url.pathname === '/'}>
             <span class="text-lg">Home</span>
         </AppRailAnchor>
 
@@ -30,11 +30,11 @@
             <span class="text-lg">Archive</span>
         </AppRailAnchor>
 
-        {#if data.id}
-            <AppRailAnchor href="/user" selected={$page.url.pathname === '/user'}>
-                <span class="text-lg">User</span>
-            </AppRailAnchor>
+        <AppRailAnchor href="/user" selected={$page.url.pathname === '/user'}>
+            <span class="text-lg">User</span>
+        </AppRailAnchor>
 
+        {#if data.id}
             <AppRailAnchor href="/editor" selected={$page.url.pathname === '/editor'}>
                 <span class="text-lg">Editor</span>
             </AppRailAnchor>
