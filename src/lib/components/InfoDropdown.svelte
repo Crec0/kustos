@@ -13,7 +13,7 @@
 <span class="grid grid-cols-[100px_minmax(0,_1fr)_32px] items-center gap-2 rounded-lg">
     <label class="font-semibold" for="guild-select">{title}</label>
     <select
-        class="bg-primary-100-800-token grow cursor-pointer rounded px-3 py-2"
+        class="bg-surface-300-600-token grow cursor-pointer rounded px-3 py-2"
         {id}
         {name}
         on:change

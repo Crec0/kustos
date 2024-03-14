@@ -1,4 +1,5 @@
 import { type Guild } from '$lib/schemas/discord-schema';
+import type { ParsedVersions } from '$lib/schemas/mc-versions-schema';
 import { postForm } from '$lib/schemas/post-form-schema';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
@@ -8,7 +9,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
     const [form, guilds, mcVersions] = await Promise.all([
         superValidate(postForm),
         fetch('/api/discord/guilds').then((res) => res.json()) as Promise<Guild[]>,
-        fetch('/api/mc/versions').then((res) => res.json()) as Promise<Record<string, boolean>>,
+        fetch('/api/mc/versions').then((res) => res.json()) as Promise<ParsedVersions>,
     ]);
 
     return {

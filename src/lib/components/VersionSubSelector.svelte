@@ -1,10 +1,11 @@
 <script lang="ts">
     import { derived, type Writable, writable } from 'svelte/store';
+    import { Minus } from 'lucide-svelte';
 
     export let versionsStore: Writable<[string, 0 | 2 | 1][]>;
     export let showSnapshots: boolean;
     export let showMinors: boolean;
-    export let css: string;
+    export let css: string = '';
 
     const startVersion = writable('');
     const endVersion = writable('');
@@ -22,28 +23,22 @@
     });
 </script>
 
-<div class="flex items-baseline {css}">
-    <span class="text-xl font-medium">(</span>
-    <div>
-        <select id="start-version" class="ml-1 w-32 rounded py-1" bind:value={$startVersion}>
-            <option value="">-</option>
-            {#each $versionsStore as [version, versionType]}
-                {#if (showSnapshots || versionType !== 2) && (showMinors || versionType === 0)}
-                    <option value={version}>{version}</option>
-                {/if}
-            {/each}
-        </select>
-    </div>
-    <span>,</span>
-    <div>
-        <select id="end-version" class="ml-1 w-32 rounded py-1" bind:value={$endVersion}>
-            <option value="">-</option>
-            {#each $endingVersions as [version, versionType]}
-                {#if (showSnapshots || versionType !== 2) && (showMinors || versionType === 0)}
-                    <option value={version}>{version}</option>
-                {/if}
-            {/each}
-        </select>
-    </div>
-    <span class="text-xl font-medium">)</span>
+<div class="flex items-center {css}">
+    <select name="start-version" id="start-version" class="w-32 rounded py-1" bind:value={$startVersion}>
+        <option value="">-</option>
+        {#each $versionsStore as [version, versionType]}
+            {#if (showSnapshots || versionType !== 2) && (showMinors || versionType === 0)}
+                <option value={version}>{version}</option>
+            {/if}
+        {/each}
+    </select>
+    <Minus />
+    <select name="end-version" id="end-version" class="w-32 rounded py-1" bind:value={$endVersion}>
+        <option value="">Latest</option>
+        {#each $endingVersions as [version, versionType]}
+            {#if (showSnapshots || versionType !== 2) && (showMinors || versionType === 0)}
+                <option value={version}>{version}</option>
+            {/if}
+        {/each}
+    </select>
 </div>
