@@ -6,9 +6,10 @@
     export let showSnapshots: boolean;
     export let showMinors: boolean;
     export let css: string = '';
+    export let value: string;
 
-    const startVersion = writable('');
-    const endVersion = writable('');
+    const startVersion = writable('1.11');
+    const endVersion = writable('latest');
 
     const endingVersions = derived([versionsStore, startVersion], ([_versionsStore, _startVersion]) => {
         if (_startVersion == undefined || _startVersion === '') {
@@ -19,13 +20,17 @@
     });
 
     startVersion.subscribe(() => {
-        $endVersion = '';
+        $endVersion = 'latest';
+        value = `${$startVersion}-${$endVersion}`;
+    });
+
+    endVersion.subscribe(() => {
+        value = `${$startVersion}-${$endVersion}`;
     });
 </script>
 
 <div class="flex items-center {css}">
     <select name="start-version" id="start-version" class="w-32 rounded py-1" bind:value={$startVersion}>
-        <option value="">-</option>
         {#each $versionsStore as [version, versionType]}
             {#if (showSnapshots || versionType !== 2) && (showMinors || versionType === 0)}
                 <option value={version}>{version}</option>
@@ -34,11 +39,11 @@
     </select>
     <Minus />
     <select name="end-version" id="end-version" class="w-32 rounded py-1" bind:value={$endVersion}>
-        <option value="">Latest</option>
         {#each $endingVersions as [version, versionType]}
             {#if (showSnapshots || versionType !== 2) && (showMinors || versionType === 0)}
                 <option value={version}>{version}</option>
             {/if}
         {/each}
+        <option value="latest">Latest</option>
     </select>
 </div>

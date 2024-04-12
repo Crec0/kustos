@@ -1,38 +1,23 @@
 <script lang="ts">
-    import { type Readable, readable, writable } from 'svelte/store';
-    import { onMount } from 'svelte';
-    import { getModalStore, getToastStore, type ModalSettings } from '@skeletonlabs/skeleton';
+    import { type Readable, writable } from 'svelte/store';
+    // import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+
     import { InfoIcon } from 'lucide-svelte';
     import FileInput from '$components/FileInput.svelte';
+    import { type Channel, type Tag } from '$lib/schemas/discord-schema';
+    import { type PostForm } from '$lib/schemas/post-form-schema';
+    import { toast } from 'svelte-sonner';
+    import { Tooltip, TooltipContent, TooltipTrigger } from '$components/ui/tooltip';
+    import { FormField, FormInput, FormLabel, FormValidation } from '$components/ui/form';
+    import type { SuperValidated } from 'sveltekit-superforms';
 
-    type NameIdObject = {
-        name: string;
-        id: string;
-    };
-
-    const channels = writable<NameIdObject[]>([]);
+    const channels = writable<Channel[]>([]);
     const selectedGuild = writable<string | null>(null);
-    const availableTags = writable<NameIdObject[]>([]);
+    const availableTags = writable<Tag[]>([]);
     const selectedTagIds = writable<string[]>([]);
 
     let images: Readable<Map<string, File>>;
     let schematics: Readable<Map<string, File>>;
-
-    const guilds = readable<NameIdObject[]>([], (set) =>
-        onMount(() => {
-            fetch('/api/discord/guilds')
-                .then((response) => {
-                    if (response.ok) {
-                        response.json().then((res) => set(res));
-                    } else {
-                        console.error('fuk');
-                    }
-                })
-                .catch((err) =>
-                    console.error('Failed to fetch guilds from the server. Please try again.', err),
-                );
-        }),
-    );
 
     const getSelectedItem = (targetElem: EventTarget | null) => {
         if (targetElem == null || !(targetElem instanceof HTMLSelectElement)) {
@@ -58,9 +43,7 @@
                     console.error('fuk');
                 }
             })
-            .catch((err) =>
-                console.error('Failed to fetch channels from the server. Please try again.', err),
-            );
+            .catch((err) => console.error('Failed to fetch channels from the server. Please try again.', err));
     };
 
     const onChannelSelection = (e: Event) => {
@@ -77,9 +60,7 @@
                     console.error('fuk');
                 }
             })
-            .catch((err) =>
-                console.error('Failed to fetch tags from the server. Please try again.', err),
-            );
+            .catch((err) => console.error('Failed to fetch tags from the server. Please try again.', err));
     };
 
     const onTagSelect = (e: Event) => {
@@ -112,14 +93,6 @@
         throw Error(message);
     };
 
-    const sendErrorToast = (msg: string) => {
-        getToastStore().trigger({
-            message: msg,
-            classes: 'variant-filled-error font-bold',
-            timeout: 10000,
-        });
-    };
-
     const onSendClick = async (_: MouseEvent) => {
         try {
             const formData = new FormData();
@@ -127,7 +100,7 @@
             formData.append('channel', getOrThrow('channel-select', 'A channel must be selected'));
 
             if ($selectedTagIds.length === 0) {
-                sendErrorToast('At least 1 tag must be selected.');
+                toast('At least 1 tag must be selected.');
                 return;
             }
 
@@ -138,13 +111,10 @@
             formData.append('name', getOrThrow('archive-name', 'Name field is required'));
             formData.append('credits', getOrThrow('archive-credits', 'Credits field is required'));
             formData.append('version', getOrThrow('archive-version', 'Version field is required'));
-            formData.append(
-                'description',
-                getOrThrow('archive-description', 'Description is required'),
-            );
+            formData.append('description', getOrThrow('archive-description', 'Description is required'));
 
             if ($images.size === 0) {
-                sendErrorToast('Please upload an image.');
+                toast('Please upload an image.');
                 return;
             }
             for (const img of $images.values()) {
@@ -152,7 +122,7 @@
             }
 
             if ($schematics.size === 0) {
-                sendErrorToast('Please upload schematics.');
+                toast('Please upload schematics.');
                 return;
             }
             for (const schem of $schematics.values()) {
@@ -162,19 +132,30 @@
             await fetch('/api/post/upload', { method: 'POST', body: formData });
         } catch (e) {
             if (!(e instanceof Error)) return;
-            sendErrorToast(e.message);
+            toast(e.message);
         }
     };
 
-    const modalStore = getModalStore();
-    const modal: ModalSettings = {
-        type: 'alert',
-        title: 'Dont see your guild listed?',
-        body: 'Make sure your guild has the bot as well as is whitelisted.',
-    };
+    export let form: SuperValidated<PostForm>;
 </script>
 
-<div>
+<div class="mx-4 w-[48rem] rounded-lg bg-primary-900 p-2 md:p-6">
+    <form method="POST">
+        <FormField {config} name="name">
+            <FormLabel>Name</FormLabel>
+            <FormInput />
+            <FormValidation />
+        </FormField>
+        <FormField {config} name="name">
+            <FormLabel>Name</FormLabel>
+            <FormInput />
+            <FormValidation />
+        </FormField>
+        <FileInput name="schematics" body="Add litematic(s)" bind:fileStore={$form.schematic} accept=".litematic" />
+    </form>
+</div>
+
+<form method="post">
     <div class="mx-4 w-[48rem] rounded-lg bg-primary-900 p-2 md:p-6">
         <div class="flex flex-col md:flex-row">
             <div class="flex items-center rounded-lg px-3 py-2">
@@ -182,32 +163,35 @@
                 <select
                     class="variant-filled-primary cursor-pointer rounded px-3 py-2"
                     id="guild-select"
+                    name="guild-select"
                     on:change={onGuildSelection}
                     required
                 >
                     <option disabled hidden selected value="">Select Guild</option>
-                    {#each $guilds as guild, idx (idx)}
-                        <option value={guild.id}>
-                            {guild.name}
-                        </option>
-                    {/each}
+                    <!--{#each $guilds as guild, idx (idx)}-->
+                    <!--    <option value={guild.id}>-->
+                    <!--        {guild.name}-->
+                    <!--    </option>-->
+                    <!--{/each}-->
                 </select>
                 <!--Info Popup -->
-                <button
-                    class="ml-2"
-                    on:click={(e) => {
-                        modalStore.trigger(modal);
-                    }}
-                    tabindex="0"
-                >
-                    <InfoIcon size={24} strokeWidth={2} />
-                </button>
+                <Tooltip>
+                    <TooltipTrigger class="ml-2">
+                        <InfoIcon size={24} strokeWidth={2} />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <div class="font-bold">Not seeing your discord listed here?</div>
+                        Make sure your guild has the bot as well as is whitelisted.<br />
+                        You can invite the bot using "THIS_LINK"
+                    </TooltipContent>
+                </Tooltip>
             </div>
             <div class="flex items-center rounded-lg px-3 py-2 md:ml-2">
                 <label class="mr-2 grow font-semibold" for="channel-select">Channel:</label>
                 <select
                     class="variant-filled-primary rounded px-3 py-2"
                     id="channel-select"
+                    name="channel-select"
                     on:change={onChannelSelection}
                 >
                     <option disabled hidden selected value="">Select Channel</option>
@@ -220,7 +204,7 @@
             </div>
         </div>
 
-        <div class="bg-primary mt-2 flex w-full items-center rounded-lg px-3 py-2">
+        <div class="mt-2 flex w-full items-center rounded-lg bg-primary px-3 py-2">
             <span class="mr-2 font-semibold">Tags:</span>
 
             {#if $availableTags.length === 0}
@@ -230,16 +214,14 @@
             <div class="flex w-full flex-wrap">
                 {#each $availableTags as tag, idx (idx)}
                     <input
-                        class="hidden"
+                        class="hidden checked:variant-filled-secondary"
                         id="tag-{tag.id}"
+                        name="tag"
                         type="checkbox"
                         value={tag.id}
                         on:change={onTagSelect}
                     />
-                    <label
-                        for="tag-{tag.id}"
-                        class="variant-filled-primary m-1 select-none rounded p-2"
-                    >
+                    <label for="tag-{tag.id}" class="variant-filled-primary m-1 select-none rounded p-2">
                         {tag.name}
                     </label>
                 {/each}
@@ -247,47 +229,43 @@
         </div>
     </div>
 
-    <div
-        class="mx-4 mt-2 w-[48rem] rounded-lg bg-primary-900 p-2 selection:bg-primary-50-900-token md:p-6"
-    >
-        <div class="bg-primary flex flex-col gap-2 rounded-lg px-3 py-2">
+    <div class="mx-4 mt-2 w-[48rem] rounded-lg bg-primary-900 p-2 selection:bg-primary-50-900-token md:p-6">
+        <div class="flex flex-col gap-2 rounded-lg bg-primary px-3 py-2">
             <div class="relative mt-9">
                 <label class="text-md absolute -translate-y-7" for="archive-na`me"> Name </label>
                 <input
                     class="variant-filled-primary w-full rounded px-3 py-2"
                     id="archive-name"
+                    name="archive-name"
                     type="text"
                 />
             </div>
 
             <div class="relative mt-9">
-                <label class="text-md absolute -translate-y-7" for="archive-credits">
-                    Credits
-                </label>
+                <label class="text-md absolute -translate-y-7" for="archive-credits"> Credits </label>
                 <textarea
                     class="variant-filled-primary w-full rounded px-3 py-2"
                     id="archive-credits"
+                    name="archive-credits"
                 />
             </div>
 
             <div class="relative mt-9">
-                <label class="text-md absolute -translate-y-7" for="archive-version">
-                    Version
-                </label>
+                <label class="text-md absolute -translate-y-7" for="archive-version"> Version </label>
                 <input
                     class="variant-filled-primary w-full rounded px-3 py-2"
                     id="archive-version"
+                    name="archive-version"
                     type="text"
                 />
             </div>
 
             <div class="relative mt-9">
-                <label class="text-md absolute -translate-y-7" for="archive-description">
-                    Description
-                </label>
+                <label class="text-md absolute -translate-y-7" for="archive-description"> Description </label>
                 <textarea
                     class="variant-filled-primary w-full rounded px-3 py-2"
                     id="archive-description"
+                    name="archive-description"
                     rows="10"
                 />
             </div>
@@ -296,15 +274,16 @@
                 accept=".png,.jpg,.jpeg,.webp"
                 bind:fileStore={images}
                 body="Add image(s)"
+                name="image"
                 isImage={true}
             />
-            <FileInput accept=".litematic" bind:fileStore={schematics} body="Add litematic(s)" />
+            <FileInput accept=".litematic" bind:fileStore={schematics} body="Add litematic(s)" name="schematic" />
             <button
                 class="variant-filled-secondary mt-10 rounded py-4 font-bold transition duration-100 hover:variant-soft-secondary"
-                on:click={onSendClick}
+                type="submit"
             >
                 Upload
             </button>
         </div>
     </div>
-</div>
+</form>

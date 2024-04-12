@@ -2,7 +2,7 @@
     import { Avatar } from '@skeletonlabs/skeleton';
     import { readable } from 'svelte/store';
     import { onMount } from 'svelte';
-    import type { UserObject } from '$lib/types';
+    import type { UserObject } from '$lib/schemas/discord-schema';
 
     export let userID: string;
 
@@ -17,12 +17,12 @@
 
 {#if $userStore == null}
     <div
-        class="flex-col variant-filled-primary card h-max flex justify-center items-center md:flex-row w-56 md:w-[36rem]"
+        class="card bg-surface-100-800-token flex h-max w-56 flex-col items-center justify-center md:w-[36rem] md:flex-row"
     >
-        <div class="p-3 md:p-6 md:pr-3 pb-0 md:pb-6">
-            <div class="placeholder w-20 h-20 animate-pulse" />
+        <div class="p-3 pb-0 md:p-6 md:pb-6 md:pr-3">
+            <div class="placeholder h-20 w-20 animate-pulse" />
         </div>
-        <div class="p-3 md:p-6 md:pl-3 flex flex-col justify-center space-y-4 animate-pulse w-full">
+        <div class="flex w-full animate-pulse flex-col justify-center space-y-4 p-3 md:p-6 md:pl-3">
             <div class="placeholder p-8"></div>
             <div class=""></div>
             <div class="placeholder"></div>
@@ -31,13 +31,11 @@
         </div>
     </div>
 {:else}
-    <div
-        class="flex-col variant-filled-primary card h-max flex justify-center items-center md:flex-row"
-    >
-        <div class="p-3 md:p-6 md:pr-3 pb-0 md:pb-6">
-            <Avatar class="w-32 rounded-xl" src={$userStore.avatarUrl} />
+    <div class="card bg-surface-100-800-token flex h-max flex-col items-center justify-center md:flex-row">
+        <div class="p-3 pb-0 md:p-6 md:pb-6 md:pr-3">
+            <Avatar class="w-32 rounded-xl" background="bg-transparent" src={$userStore.avatarUrl} />
         </div>
-        <div class="p-3 md:p-6 md:pl-3 flex flex-col justify-center">
+        <div class="flex flex-col justify-center p-3 md:p-6 md:pl-3">
             <div class="text-4xl font-bold">
                 {$userStore.displayName}
             </div>
