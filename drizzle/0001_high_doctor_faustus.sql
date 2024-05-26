@@ -1,0 +1,1 @@
+ALTER TABLE `posts` ADD `created_time` integer DEFAULT (unixepoch()) NOT NULL;
