@@ -7,15 +7,15 @@
 </script>
 
 {#if user.id}
-    <div class="variant-outline-primary chip hover:cursor-default">
+    <div class="chip hover:cursor-default">
         <Avatar.Root>
             <Avatar.Image src={user.avatarUrl} alt="user avatar" />
             <Avatar.Fallback>CN</Avatar.Fallback>
         </Avatar.Root>
         <span class="pl-2 text-xl font-semibold"> {user.displayName} </span>
     </div>
-    <form action="/auth/logout" method="post" class="variant-filled-primary inline">
-        <button class="variant-filled-error chip py-2" id="logout-button">
+    <form action="/auth/logout" method="post" class="inline">
+        <button class="variant-filled-error chip py-3" id="logout-button">
             <span class="text-xl font-semibold"> Logout </span>
         </button>
     </form>
