@@ -1,6 +1,6 @@
 import { ISSUER } from '$env/static/private';
 import { privateKey } from '$lib/server';
-import { db, tokens } from '$lib/server/database';
+import { db, users } from '$lib/server/database';
 import { fetchDiscordOAuthToken, fetchDiscordOAuthUser } from '$lib/server/discord/http';
 import type { DiscordOAuth, DiscordUser } from '$lib/server/discord/schemas';
 import { epochSecondsAfter } from '$lib/server/utils/math';
@@ -24,23 +24,27 @@ async function getOAuthAndUser(event: RequestEvent) {
 }
 
 function storeTokenInfo(oAuth: DiscordOAuth, user: DiscordUser, expireTime: number) {
-    db.insert(tokens)
+    db.insert(users)
         .values({
+            id: user.id,
+            username: user.username,
+            displayName: user.global_name || user.username,
             accessToken: oAuth.access_token,
             refreshToken: oAuth.refresh_token,
             expiry: expireTime,
-            userID: user.id,
         })
         .onConflictDoUpdate({
-            target: tokens.userID,
-            where: eq(tokens.userID, user.id),
+            target: users.id,
+            targetWhere: eq(users.id, user.id),
             set: {
+                username: user.username,
+                displayName: user.global_name || user.username,
                 accessToken: oAuth.access_token,
                 refreshToken: oAuth.refresh_token,
                 expiry: expireTime,
             },
         })
-        .prepare(true)
+        .prepare()
         .run();
 }
 

@@ -45,7 +45,7 @@
         </AppRailAnchor>
     </AppRail>
 
-    <div class="mt-10 flex justify-center">
+    <div class="mt-5 flex justify-center">
         <slot />
     </div>
 
