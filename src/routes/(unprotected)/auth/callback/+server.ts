@@ -1,6 +1,7 @@
 import { ISSUER } from '$env/static/private';
 import { privateKey } from '$lib/server';
-import { db, users } from '$lib/server/database';
+import { db } from '$lib/server/database';
+import { users } from '$lib/server/database/schema';
 import { fetchDiscordOAuthToken, fetchDiscordOAuthUser } from '$lib/server/discord/http';
 import type { DiscordOAuth, DiscordUser } from '$lib/server/discord/schemas';
 import { epochSecondsAfter } from '$lib/server/utils/math';
