@@ -2,7 +2,8 @@ import { type Guild } from '$lib/schemas/discord-schema';
 import type { ParsedVersions } from '$lib/schemas/mc-versions-schema';
 import { postForm } from '$lib/schemas/post-form-schema';
 import { logger } from '$lib/server';
-import { blobs, db, posts } from '$lib/server/database';
+import { db } from '$lib/server/database';
+import { blobs, posts } from '$lib/server/database/schema';
 import { upload } from '$lib/server/s3';
 import { generateUniqueID } from '$lib/server/utils/random';
 import { error, fail } from '@sveltejs/kit';
@@ -43,13 +44,11 @@ export const actions = {
             .values({
                 id: postID,
                 name: form.data.name,
-                author: userID,
-                channel: form.data.channel,
-                credits: form.data.credits,
-                guild: form.data.guild,
-                tags: form.data.tag.join(','),
+                authorId: userID,
                 version: form.data.version,
                 description: form.data.description,
+                summary: 'PLACEHOLDER',
+                slug: 'PLACEHOLDER',
             })
             .returning()
             .prepare()
@@ -65,9 +64,9 @@ export const actions = {
 };
 
 const uploadAllOf = (formData: File[], postID: string, kind: string) =>
-    formData.map((f) => {
+    formData.map(async (f) => {
         const id = generateUniqueID(blobs, blobs.id);
         // TODO make this not so error prone
-        db.insert(blobs).values({ id: id, name: f.name, kind: kind, postId: postID }).returning().get();
+        await db.insert(blobs).values({ id: id, name: f.name, kind: kind, postId: postID }).execute();
         return upload(`${kind}/${postID}/${id}`, f.arrayBuffer());
     });

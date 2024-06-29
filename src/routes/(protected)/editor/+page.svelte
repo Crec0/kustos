@@ -1,17 +1,13 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import { filesProxy, superForm } from 'sveltekit-superforms/client';
-    import { InfoIcon } from 'lucide-svelte';
     import FileInput from '$components/FileInput.svelte';
     import { type Writable, writable } from 'svelte/store';
     import { type Channel, type Tag } from '$lib/schemas/discord-schema';
     import { postForm } from '$lib/schemas/post-form-schema';
-    import { Tooltip, TooltipContent, TooltipTrigger } from '$components/ui/tooltip';
-    import InfoDropdown from '$components/InfoDropdown.svelte';
     import { Button } from '$components/ui/form';
     import { safeAwait } from '$lib/utils/safeAwait';
     import SelectionDrawer from '$components/unused/VersionSelector.svelte';
-    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
 
     export let data: PageData;
@@ -110,110 +106,45 @@
 
 <form
     class="bg-surface-100-800-token mx-4 flex w-[60%] flex-col gap-2 rounded-lg p-2 md:p-6"
-    method="POST"
     enctype="multipart/form-data"
-    use:enhance
+    method="POST"
     on:formdata={manuallyAddFiles}
+    use:enhance
 >
-    <SuperDebug data={form} />
-    <InfoDropdown
-        id="guild"
-        items={data.guilds}
-        message="Select guild"
-        on:change={onGuildSelection}
-        required
-        title="Guild"
-    >
-        <Tooltip>
-            <TooltipTrigger>
-                <InfoIcon size={24} strokeWidth={2} />
-            </TooltipTrigger>
-            <TooltipContent class="bg-surface-100-800-token border-primary-500">
-                <div class="font-bold">Not seeing your guild listed here?</div>
-                Make sure your guild has the bot as well as is whitelisted.<br />
-                You can invite the bot using "THIS_LINK"
-            </TooltipContent>
-        </Tooltip>
-    </InfoDropdown>
-    <InfoDropdown
-        disabled={$channels.length === 0}
-        id="channel"
-        items={$channels}
-        message="Select channel"
-        on:change={onChannelSelection}
-        required
-        title="Channel"
-    >
-        <Tooltip>
-            <TooltipTrigger>
-                <InfoIcon size={24} strokeWidth={2} />
-            </TooltipTrigger>
-            <TooltipContent class="bg-surface-100-800-token border-primary-500">
-                <div class="font-bold">Not seeing your desired channel listed here?</div>
-                Make sure the channel is a forum channel<br />
-                Other channel types are not supported.
-            </TooltipContent>
-        </Tooltip>
-    </InfoDropdown>
-
-    <div class="grid w-full grid-cols-[100px_minmax(0,_1fr)] items-center gap-2 rounded-lg">
-        <span>Tags</span>
-
-        {#if $availableTags.length === 0}
-            <div class="placeholder variant-ghost-primary w-full animate-pulse px-2 py-5" />
-        {:else}
-            <div class="flex w-full flex-wrap gap-1">
-                {#each $availableTags as tag, idx (idx)}
-                    <input
-                        class="hidden"
-                        id="tag-{tag.id}"
-                        name="tag"
-                        type="checkbox"
-                        value={tag.id}
-                        on:change={onTagSelect}
-                    />
-                    <label for="tag-{tag.id}" class="bg-surface-300-600-token select-none rounded p-2">
-                        {tag.name}
-                    </label>
-                {/each}
-            </div>
-        {/if}
-    </div>
-
     <div class="grid w-full grid-cols-[100px_minmax(0,_1fr)] items-center gap-2 rounded-lg">
         <span>Version</span>
-        <SelectionDrawer versions={data.versions} bind:value={$form.version} />
+        <SelectionDrawer bind:value={$form.version} versions={data.versions} />
     </div>
 
     <div class="relative mt-9">
         <label class="text-md absolute -translate-y-7" for="archive-na`me"> Name </label>
         <input
+            bind:value={$form.name}
             class="variant-ringed-primary w-full rounded px-3 py-2"
             id="name"
             name="name"
             type="text"
-            bind:value={$form.name}
         />
     </div>
 
     <div class="relative mt-9">
         <label class="text-md absolute -translate-y-7" for="archive-credits"> Credits </label>
         <textarea
+            bind:value={$form.credits}
             class="variant-ringed-primary w-full rounded px-3 py-2"
             id="credits"
             name="credits"
-            bind:value={$form.credits}
         />
     </div>
 
     <div class="relative mt-9">
         <label class="text-md absolute -translate-y-7" for="archive-description"> Description </label>
         <textarea
+            bind:value={$form.description}
             class="variant-ringed-primary w-full rounded px-3 py-2"
             id="description"
             name="description"
             rows="10"
-            bind:value={$form.description}
         />
     </div>
 
