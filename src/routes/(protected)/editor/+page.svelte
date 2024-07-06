@@ -7,7 +7,7 @@
     import { postForm } from '$lib/schemas/post-form-schema';
     import { Button } from '$components/ui/form';
     import { safeAwait } from '$lib/utils/safeAwait';
-    import SelectionDrawer from '$components/unused/VersionSelector.svelte';
+    import VersionSelector from '$components/version-selector/version-selector.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
 
     export let data: PageData;
@@ -113,7 +113,7 @@
 >
     <div class="grid w-full grid-cols-[100px_minmax(0,_1fr)] items-center gap-2 rounded-lg">
         <span>Version</span>
-        <SelectionDrawer bind:value={$form.version} versions={data.versions} />
+        <VersionSelector bind:value={$form.version} versions={data.versions} />
     </div>
 
     <div class="relative mt-9">
