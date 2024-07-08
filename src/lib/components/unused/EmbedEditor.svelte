@@ -139,7 +139,7 @@
     export let form: SuperValidated<PostForm>;
 </script>
 
-<div class="mx-4 w-[48rem] rounded-lg bg-primary-900 p-2 md:p-6">
+<div class="bg-primary-900 mx-4 w-[48rem] rounded-lg p-2 md:p-6">
     <form method="POST">
         <FormField {config} name="name">
             <FormLabel>Name</FormLabel>
@@ -156,7 +156,7 @@
 </div>
 
 <form method="post">
-    <div class="mx-4 w-[48rem] rounded-lg bg-primary-900 p-2 md:p-6">
+    <div class="bg-primary-900 mx-4 w-[48rem] rounded-lg p-2 md:p-6">
         <div class="flex flex-col md:flex-row">
             <div class="flex items-center rounded-lg px-3 py-2">
                 <label class="mr-2 grow font-semibold" for="guild-select">Guild:</label>
@@ -214,7 +214,7 @@
             <div class="flex w-full flex-wrap">
                 {#each $availableTags as tag, idx (idx)}
                     <input
-                        class="hidden checked:variant-filled-secondary"
+                        class="checked:variant-filled-secondary hidden"
                         id="tag-{tag.id}"
                         name="tag"
                         type="checkbox"
@@ -229,7 +229,7 @@
         </div>
     </div>
 
-    <div class="mx-4 mt-2 w-[48rem] rounded-lg bg-primary-900 p-2 selection:bg-primary-50-900-token md:p-6">
+    <div class="bg-primary-900 mx-4 mt-2 w-[48rem] rounded-lg p-2 md:p-6">
         <div class="flex flex-col gap-2 rounded-lg bg-primary px-3 py-2">
             <div class="relative mt-9">
                 <label class="text-md absolute -translate-y-7" for="archive-na`me"> Name </label>
@@ -279,7 +279,7 @@
             />
             <FileInput accept=".litematic" bind:fileStore={schematics} body="Add litematic(s)" name="schematic" />
             <button
-                class="variant-filled-secondary mt-10 rounded py-4 font-bold transition duration-100 hover:variant-soft-secondary"
+                class="variant-filled-secondary hover:variant-soft-secondary mt-10 rounded py-4 font-bold transition duration-100"
                 type="submit"
             >
                 Upload

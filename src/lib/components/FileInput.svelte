@@ -53,7 +53,7 @@
 <div class="w-full space-y-2">
     <div class="flex items-center justify-center">
         <label
-            class="bg-surface-300-600-token flex h-16 w-full cursor-pointer items-center justify-center rounded border-2 border-dashed border-surface-400 hover:border-primary-500 hover:text-primary-400"
+            class="border-surface-400 hover:border-primary-500 hover:text-primary-400 flex h-16 w-full cursor-pointer items-center justify-center rounded border-2 border-dashed"
             for={name}
         >
             {body}
@@ -69,13 +69,13 @@
             <div
                 transition:fade={{ duration: 400, easing: expoOut }}
                 animate:flip={{ duration: 400, easing: expoOut }}
-                class={`bg-surface-300-600-token flex items-center space-x-2 rounded p-2 ${isImage ? 'relative w-max' : 'w-full'}`}
+                class={`flex items-center space-x-2 rounded p-2 ${isImage ? 'relative w-max' : 'w-full'}`}
             >
                 {#if isImage}
                     <img src={URL.createObjectURL(file)} alt={file.name} class="max-h-[160px]" />
                     <button class="absolute right-2.5 top-2.5" on:click|preventDefault={() => removeFile(file)}>
                         <XIcon
-                            class="variant-filled-surface rounded stroke-red-500 hover:variant-filled-error hover:stroke-red-100"
+                            class="variant-filled-surface hover:variant-filled-error rounded stroke-red-500 hover:stroke-red-100"
                         />
                     </button>
                 {:else}
@@ -85,7 +85,7 @@
                     <div class="flex flex-col gap-4">
                         <button on:click|preventDefault={() => removeFile(file)}>
                             <XIcon
-                                class="variant-soft-error rounded stroke-red-500 hover:variant-filled-error hover:stroke-red-100"
+                                class="variant-soft-error hover:variant-filled-error rounded stroke-red-500 hover:stroke-red-100"
                             />
                         </button>
                     </div>

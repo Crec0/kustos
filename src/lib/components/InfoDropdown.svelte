@@ -12,14 +12,7 @@
 
 <span class="grid grid-cols-[100px_minmax(0,_1fr)_32px] items-center gap-2 rounded-lg">
     <label class="font-semibold" for="guild-select">{title}</label>
-    <select
-        class="bg-surface-300-600-token grow cursor-pointer rounded px-3 py-2"
-        {id}
-        {name}
-        on:change
-        {required}
-        {disabled}
-    >
+    <select class="grow cursor-pointer rounded px-3 py-2" {id} {name} on:change {required} {disabled}>
         <option disabled hidden selected value="">{message}</option>
         {#each items as entity, idx (idx)}
             <option value={entity.id}>

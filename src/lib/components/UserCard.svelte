@@ -16,9 +16,7 @@
 </script>
 
 {#if $userStore == null}
-    <div
-        class="card bg-surface-100-800-token flex h-max w-56 flex-col items-center justify-center md:w-[36rem] md:flex-row"
-    >
+    <div class="card flex h-max w-56 flex-col items-center justify-center md:w-[36rem] md:flex-row">
         <div class="p-3 pb-0 md:p-6 md:pb-6 md:pr-3">
             <div class="placeholder h-20 w-20 animate-pulse" />
         </div>
@@ -31,7 +29,7 @@
         </div>
     </div>
 {:else}
-    <div class="card bg-surface-100-800-token flex h-max flex-col items-center justify-center md:flex-row">
+    <div class="card flex h-max flex-col items-center justify-center md:flex-row">
         <div class="p-3 pb-0 md:p-6 md:pb-6 md:pr-3">
             <Avatar class="w-32 rounded-xl" background="bg-transparent" src={$userStore.avatarUrl} />
         </div>

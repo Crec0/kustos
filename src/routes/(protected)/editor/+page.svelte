@@ -105,7 +105,7 @@
 </script>
 
 <form
-    class="bg-surface-100-800-token mx-4 flex w-[60%] flex-col gap-2 rounded-lg p-2 md:p-6"
+    class=" mx-4 flex w-[60%] flex-col gap-2 rounded-lg p-2 md:p-6"
     enctype="multipart/form-data"
     method="POST"
     on:formdata={manuallyAddFiles}

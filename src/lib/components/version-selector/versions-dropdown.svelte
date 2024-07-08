@@ -39,16 +39,16 @@
                 <span class="grow">{value || placeHolder}</span>
             </Button>
         </PopoverTrigger>
-        <PopoverContent class="bg-surface-50-900-token w-[180px] p-0">
+        <PopoverContent class="w-[180px] p-0">
             <input
                 placeholder="Search version"
-                class="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent px-2 py-3 outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                class="flex h-10 w-full rounded-md px-2 py-3 outline-none"
                 bind:value={$searchValue}
             />
             <VirtualList height={300} itemCount={$filteredVersions.length} itemSize={36} width="100%">
                 <div slot="item" let:index let:style {style}>
                     <button
-                        class="grid h-full w-full grid-cols-[2rem_1fr] items-center justify-items-start gap-2 px-2 hover:bg-surface-200-700-token"
+                        class="grid h-full w-full grid-cols-[2rem_1fr] items-center justify-items-start gap-2 px-2 hover:bg-background/20"
                         on:click|preventDefault={() => selectVersion(index)}
                     >
                         {#if value === $filteredVersions[index]}
