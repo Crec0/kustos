@@ -48,7 +48,7 @@
             <VirtualList height={300} itemCount={$filteredVersions.length} itemSize={36} width="100%">
                 <div slot="item" let:index let:style {style}>
                     <button
-                        class="grid h-full w-full grid-cols-[2rem_1fr] items-center justify-items-start gap-2 px-2 hover:bg-background/20"
+                        class="grid h-full w-full grid-cols-[2rem_1fr] items-center justify-items-start gap-2 px-2 hover:bg-accent"
                         on:click|preventDefault={() => selectVersion(index)}
                     >
                         {#if value === $filteredVersions[index]}

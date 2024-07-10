@@ -6,20 +6,19 @@
     import { Switch } from '$components/ui/switch';
     import { Button } from '$components/ui/button';
     import { Plus } from 'lucide-svelte';
-    import { Card } from '$components/ui/card';
+    import { Card, CardContent, CardHeader, CardTitle } from '$components/ui/card';
     import Minus from 'lucide-svelte/icons/minus';
     import { onMount } from 'svelte';
+    import { Empty } from '$components/ui/command';
 
-    export let startValue: string;
-    export let endValue: string;
+    export let parsedVersions: ParsedVersions;
+    export let selectedVersions: string[] = [];
 
-    export let versions: ParsedVersions;
-
-    const versionsStore = writable(Object.entries(versions));
+    const versions = Object.keys(parsedVersions);
     const showSnapshots: Writable<boolean> = writable(false);
 
-    const allSelectableVersions = derived([versionsStore, showSnapshots], ([oldAllVersions, oldShowSnapshots]) => {
-        return oldAllVersions
+    const allSelectableVersions = derived([showSnapshots], ([oldShowSnapshots]) => {
+        return Object.entries(parsedVersions)
             .filter(([_, vType]) => oldShowSnapshots || vType !== 2)
             .map(([version, _]) => version)
             .toReversed();
@@ -31,13 +30,27 @@
         end: string;
     };
 
-    export let ranges: Writable<Map<string, RangeComponent>> = writable(new Map());
+    const ranges: Writable<Map<string, RangeComponent>> = writable(new Map());
+
+    ranges.subscribe((sRanges) => {
+        selectedVersions = Array.from(
+            Array.from(sRanges.values())
+                .map((range) => [range.start, range.end])
+                .filter(([start, end]) => start && end)
+                .reduce((acc, [start, end]) => {
+                    const sIdx = versions.indexOf(start);
+                    const eIdx = versions.indexOf(end);
+                    versions.slice(Math.min(sIdx, eIdx), Math.max(sIdx, eIdx) + 1).forEach((v) => acc.add(v));
+                    return acc;
+                }, new Set<string>()),
+        ).sort((a, b) => versions.indexOf(a) - versions.indexOf(b));
+        console.log(selectedVersions);
+    });
 
     const addRange = () => {
         ranges.update((oldRanges) => {
             const newId = crypto.randomUUID();
-            console.log(newId);
-            return new Map(oldRanges).set(newId, { id: newId, start: startValue, end: endValue });
+            return new Map(oldRanges).set(newId, { id: newId, start: '', end: '' });
         });
     };
 
@@ -52,9 +65,15 @@
     onMount(() => addRange());
 </script>
 
-<div class="flex gap-x-2">
-    <Card class="flex grow flex-col justify-between gap-2 border-0 p-2 outline-0 ring-0">
-        {#each $ranges.entries() as [id, range]}
+<Card class="border-0">
+    <CardHeader class="p-2">
+        <div class="flex min-w-fit items-center gap-2">
+            <Label for="show-snapshots">Show Snapshots</Label>
+            <Switch bind:checked={$showSnapshots} class="" id="show-snapshots" />
+        </div>
+    </CardHeader>
+    <CardContent class="flex flex-col gap-2 p-2 pt-0">
+        {#each $ranges.entries() as [id, range], idx}
             <div class="flex gap-2">
                 <VersionsDropdown
                     bind:value={range.start}
@@ -62,19 +81,19 @@
                     versions={allSelectableVersions}
                 />
                 <VersionsDropdown bind:value={range.end} placeHolder="End Version" versions={allSelectableVersions} />
-                <Button on:click={addRange} variant="outline">
-                    <Plus class="h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-                {#if $ranges.size > 1}
+                {#if $ranges.size === 1}
+                    <Button variant="outline" class="cursor-default hover:bg-background" on:click={() => {}}>
+                        <span class="h-4 w-4"> &nbsp; </span>
+                    </Button>
+                {:else}
                     <Button variant="outline" on:click={() => removeRange(id)}>
                         <Minus class="h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 {/if}
             </div>
         {/each}
-    </Card>
-    <div class="flex min-w-fit items-center gap-2">
-        <Label for="show-snapshots">Show Snapshots</Label>
-        <Switch bind:checked={$showSnapshots} class="" id="show-snapshots" />
-    </div>
-</div>
+        <Button on:click={addRange} variant="outline">
+            <Plus class="h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+    </CardContent>
+</Card>

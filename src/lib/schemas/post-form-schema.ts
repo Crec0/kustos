@@ -6,7 +6,7 @@ export const postForm = z.object({
     tag: z.string().array().max(5),
     name: z.string(),
     credits: z.string(),
-    version: z.string(),
+    version: z.string().array(),
     description: z.string(),
     image: z
         .instanceof(File)

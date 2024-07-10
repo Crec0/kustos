@@ -9,6 +9,8 @@
     import { safeAwait } from '$lib/utils/safeAwait';
     import VersionSelector from '$components/version-selector/version-selector.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
+    import { Card } from '$components/ui/card';
+    import { CardContent, CardHeader, CardTitle } from '$components/ui/card/index.js';
 
     export let data: PageData;
 
@@ -105,16 +107,20 @@
 </script>
 
 <form
-    class=" mx-4 flex w-[60%] flex-col gap-2 rounded-lg p-2 md:p-6"
+    class="mx-4 flex w-[75%] flex-col gap-2 rounded-lg p-2 md:p-6"
     enctype="multipart/form-data"
     method="POST"
     on:formdata={manuallyAddFiles}
     use:enhance
 >
-    <div class="grid w-full grid-cols-[100px_minmax(0,_1fr)] items-center gap-2 rounded-lg">
-        <span>Version</span>
-        <VersionSelector bind:value={$form.version} versions={data.versions} />
-    </div>
+    <Card class="w-max p-2">
+        <CardHeader class="px-0 py-2">
+            <CardTitle class="pl-2">Version</CardTitle>
+        </CardHeader>
+        <CardContent class="p-0">
+            <VersionSelector bind:selectedVersions={$form.version} parsedVersions={data.versions} />
+        </CardContent>
+    </Card>
 
     <div class="relative mt-9">
         <label class="text-md absolute -translate-y-7" for="archive-na`me"> Name </label>
