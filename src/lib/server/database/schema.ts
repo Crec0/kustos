@@ -19,7 +19,7 @@ export const posts = sqliteTable(
             .notNull()
             .references(() => users.id),
         name: text('name').notNull(),
-        version: text('version').notNull(),
+        versions: text('version').notNull(),
         summary: text('summary').notNull(),
         description: text('description').notNull(),
         slug: text('slug').notNull(),

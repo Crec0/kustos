@@ -1,9 +1,8 @@
 <script lang="ts">
     import { XIcon } from 'lucide-svelte';
-    import { fade } from 'svelte/transition';
-    import { flip } from 'svelte/animate';
-    import { expoOut } from 'svelte/easing';
     import { type Unsubscriber, type Updater, writable, type Writable } from 'svelte/store';
+    import { Card, CardContent, CardHeader } from '$components/ui/card';
+    import { Button } from '$components/ui/button';
 
     export let accept: string;
     export let body: string;
@@ -50,27 +49,12 @@
     };
 </script>
 
-<div class="w-full space-y-2">
-    <div class="flex items-center justify-center">
-        <label
-            class="border-surface-400 hover:border-primary-500 hover:text-primary-400 flex h-16 w-full cursor-pointer items-center justify-center rounded border-2 border-dashed"
-            for={name}
-        >
-            {body}
-        </label>
-
-        <input {accept} class="hidden" id={name} multiple {name} on:change={updateFiles} type="file" />
-    </div>
-
-    <div
-        class={`flex gap-1 ${$filesArray.length === 0 ? 'hidden' : ''} ${isImage ? 'flex-row flex-wrap' : 'flex-col'}`}
+<Card class="w-full max-w-lg p-2">
+    <CardHeader
+        class={`flex ${$filesArray.length === 0 ? 'hidden' : ''} ${isImage ? 'flex-row flex-wrap' : 'flex-col'}`}
     >
         {#each $filesArray as file (file.name)}
-            <div
-                transition:fade={{ duration: 400, easing: expoOut }}
-                animate:flip={{ duration: 400, easing: expoOut }}
-                class={`flex items-center space-x-2 rounded p-2 ${isImage ? 'relative w-max' : 'w-full'}`}
-            >
+            <div class={`flex items-center space-x-2 rounded ${isImage ? 'relative w-max' : 'w-full'}`}>
                 {#if isImage}
                     <img src={URL.createObjectURL(file)} alt={file.name} class="max-h-[160px]" />
                     <button class="absolute right-2.5 top-2.5" on:click|preventDefault={() => removeFile(file)}>
@@ -79,18 +63,34 @@
                         />
                     </button>
                 {:else}
-                    <span class="grow overflow-clip text-ellipsis whitespace-nowrap">
-                        {file.name}
-                    </span>
-                    <div class="flex flex-col gap-4">
-                        <button on:click|preventDefault={() => removeFile(file)}>
-                            <XIcon
-                                class="variant-soft-error hover:variant-filled-error rounded stroke-red-500 hover:stroke-red-100"
-                            />
-                        </button>
+                    <div
+                        class="flex w-fit items-center gap-x-2 rounded transition-colors has-[#thing:hover]:bg-destructive/60 has-[#thing:hover]:text-destructive-foreground"
+                    >
+                        <span class="w-80 max-w-80 truncate px-2">
+                            {file.name}
+                        </span>
+                        <Button
+                            class="space-x-2 bg-secondary text-secondary-foreground"
+                            variant="destructive"
+                            id="thing"
+                            on:click={() => removeFile(file)}
+                        >
+                            <span> Remove </span>
+                            <XIcon />
+                        </Button>
                     </div>
                 {/if}
             </div>
         {/each}
-    </div>
-</div>
+    </CardHeader>
+    <CardContent class="p-2">
+        <label
+            class="hover:light:bg-accent/20 flex h-16 w-full cursor-pointer items-center justify-center rounded border-2 border-dashed transition-colors hover:border-accent hover:bg-accent/40 hover:text-foreground"
+            for={name}
+        >
+            {body}
+        </label>
+
+        <input {accept} class="hidden" id={name} multiple {name} on:change={updateFiles} type="file" />
+    </CardContent>
+</Card>

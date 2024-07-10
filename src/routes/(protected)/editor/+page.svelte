@@ -118,7 +118,7 @@
             <CardTitle class="pl-2">Version</CardTitle>
         </CardHeader>
         <CardContent class="p-0">
-            <VersionSelector bind:selectedVersions={$form.version} parsedVersions={data.versions} />
+            <VersionSelector bind:selectedVersions={$form.versions} parsedVersions={data.versions} />
         </CardContent>
     </Card>
 

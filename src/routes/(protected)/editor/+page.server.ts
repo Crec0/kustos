@@ -45,7 +45,7 @@ export const actions = {
                 id: postID,
                 name: form.data.name,
                 authorId: userID,
-                version: form.data.version,
+                versions: form.data.version,
                 description: form.data.description,
                 summary: 'PLACEHOLDER',
                 slug: 'PLACEHOLDER',
