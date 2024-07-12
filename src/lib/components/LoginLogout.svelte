@@ -1,5 +1,5 @@
 <script lang="ts">
-    import DiscordLogo from '$lib/assets/discord.svg';
+    import DiscordLogo from '$lib/assets/discord.svelte';
     import type { UserObject } from '$lib/schemas/discord-schema';
     import { Button } from '$components/ui/button';
     import { Avatar, AvatarImage, AvatarFallback } from '$components/ui/avatar';
@@ -16,14 +16,14 @@
         <span class="pl-2 text-xl font-semibold"> {user.displayName} </span>
     </div>
     <form action="/auth/logout" method="post" class="inline">
-        <Button variant="outline" id="logout-button" class="hover:bg-destructive">
+        <Button type="submit" variant="outline" class="hover:bg-destructive">
             <span class="text-xl font-semibold"> Logout </span>
         </Button>
     </form>
 {:else}
     <form action="/auth/login" method="post" class="flex justify-center">
-        <Button class="flex items-center">
-            <img alt="Login discord icon" src={DiscordLogo} class="w-8" />
+        <Button type="submit" class="flex items-center text-primary-foreground">
+            <DiscordLogo />
             <span class="text-xl font-semibold"> Login </span>
         </Button>
     </form>

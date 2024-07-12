@@ -86,7 +86,11 @@
                         <span class="h-4 w-4"> &nbsp; </span>
                     </Button>
                 {:else}
-                    <Button variant="outline" on:click={() => removeRange(id)}>
+                    <Button
+                        variant="outline"
+                        class="hover:bg-destructive hover:text-destructive-foreground"
+                        on:click={() => removeRange(id)}
+                    >
                         <Minus class="h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 {/if}
