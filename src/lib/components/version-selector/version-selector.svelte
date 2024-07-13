@@ -9,10 +9,8 @@
     import { Card, CardContent, CardHeader, CardTitle } from '$components/ui/card';
     import Minus from 'lucide-svelte/icons/minus';
     import { onMount } from 'svelte';
-    import { Empty } from '$components/ui/command';
 
     export let parsedVersions: ParsedVersions;
-    export let selectedVersions: string[] = [];
 
     const versions = Object.keys(parsedVersions);
     const showSnapshots: Writable<boolean> = writable(false);
@@ -32,19 +30,17 @@
 
     const ranges: Writable<Map<string, RangeComponent>> = writable(new Map());
 
-    ranges.subscribe((sRanges) => {
-        selectedVersions = Array.from(
-            Array.from(sRanges.values())
-                .map((range) => [range.start, range.end])
-                .filter(([start, end]) => start && end)
-                .reduce((acc, [start, end]) => {
-                    const sIdx = versions.indexOf(start);
-                    const eIdx = versions.indexOf(end);
-                    versions.slice(Math.min(sIdx, eIdx), Math.max(sIdx, eIdx) + 1).forEach((v) => acc.add(v));
-                    return acc;
-                }, new Set<string>()),
-        ).sort((a, b) => versions.indexOf(a) - versions.indexOf(b));
-        console.log(selectedVersions);
+    export const selectedVersions = derived(ranges, ($ranges) => {
+        const selectedVersions = Array.from($ranges.values())
+            .map((range) => [range.start, range.end])
+            .filter(([start, end]) => start && end)
+            .reduce((acc, [start, end]) => {
+                const sIdx = versions.indexOf(start);
+                const eIdx = versions.indexOf(end);
+                versions.slice(Math.min(sIdx, eIdx), Math.max(sIdx, eIdx) + 1).forEach((v) => acc.add(v));
+                return acc;
+            }, new Set<string>());
+        return Array.from(selectedVersions).sort((a, b) => versions.indexOf(a) - versions.indexOf(b));
     });
 
     const addRange = () => {

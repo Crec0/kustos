@@ -13,10 +13,9 @@ export const load: PageServerLoad = async ({ url: { searchParams } }) => {
         .innerJoin(blobs, and(eq(posts.id, blobs.id), eq(blobs.kind, 'icon')))
         .offset(offset * limit)
         .limit(limit)
-        .orderBy(posts.createdTime)
-        .all();
+        .orderBy(posts.createdTime);
 
     return {
-        posts: postItems,
+        posts: await postItems,
     };
 };

@@ -24,8 +24,9 @@ async function getOAuthAndUser(event: RequestEvent) {
     return { oAuth, user };
 }
 
-function storeTokenInfo(oAuth: DiscordOAuth, user: DiscordUser, expireTime: number) {
-    db.insert(users)
+async function storeTokenInfo(oAuth: DiscordOAuth, user: DiscordUser, expireTime: number) {
+    await db
+        .insert(users)
         .values({
             id: user.id,
             username: user.username,
@@ -44,9 +45,7 @@ function storeTokenInfo(oAuth: DiscordOAuth, user: DiscordUser, expireTime: numb
                 refreshToken: oAuth.refresh_token,
                 expiry: expireTime,
             },
-        })
-        .prepare()
-        .run();
+        });
 }
 
 async function generateJWT(userID: string, expireTime: number): Promise<string> {
@@ -71,7 +70,7 @@ export const GET: RequestHandler = async (event: RequestEvent) => {
     const { oAuth, user } = await getOAuthAndUser(event);
     const expireTime = epochSecondsAfter(oAuth.expires_in);
 
-    storeTokenInfo(oAuth, user, expireTime);
+    await storeTokenInfo(oAuth, user, expireTime);
 
     const jwt = await generateJWT(user.id, expireTime);
     setJWTCookie(event, jwt);

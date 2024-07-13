@@ -5,7 +5,6 @@ import { logger } from '$lib/server';
 import { db } from '$lib/server/database';
 import { blobs, posts } from '$lib/server/database/schema';
 import { upload } from '$lib/server/s3';
-import { generateUniqueID } from '$lib/server/utils/random';
 import { error, fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate, withFiles } from 'sveltekit-superforms/server';
@@ -38,21 +37,21 @@ export const actions = {
             error(403, 'Invalid user id header');
         }
 
-        const postID = generateUniqueID(posts, posts.id);
+        console.log(form.data);
 
-        db.insert(posts)
+        const op = await db
+            .insert(posts)
             .values({
-                id: postID,
                 name: form.data.name,
                 authorId: userID,
-                versions: form.data.version,
+                versions: form.data.versions.join(','),
                 description: form.data.description,
                 summary: 'PLACEHOLDER',
                 slug: 'PLACEHOLDER',
             })
-            .returning()
-            .prepare()
-            .run();
+            .returning();
+
+        const postID = op[0].id;
 
         await Promise.allSettled([
             ...uploadAllOf(form.data.schematic, postID, 'schematic'),
@@ -65,8 +64,7 @@ export const actions = {
 
 const uploadAllOf = (formData: File[], postID: string, kind: string) =>
     formData.map(async (f) => {
-        const id = generateUniqueID(blobs, blobs.id);
-        // TODO make this not so error prone
-        await db.insert(blobs).values({ id: id, name: f.name, kind: kind, postId: postID }).execute();
-        return upload(`${kind}/${postID}/${id}`, f.arrayBuffer());
+        const dd = await db.insert(blobs).values({ name: f.name, kind: kind, postId: postID }).returning();
+        const ddID = dd[0].id;
+        return upload(`${kind}/${postID}/${ddID}`, f.arrayBuffer());
     });

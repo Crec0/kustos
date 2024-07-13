@@ -1,11 +1,23 @@
+import { POSTGRES_DB, POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER } from '$env/static/private';
 import { logger } from '$lib/server';
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import { blobs, discordPost, inspirations, members, posts, postTags, users, versions } from './schema';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import postgres from 'postgres';
+import { blobs, discordPost, members, posts, postTags, relatedPost, users, versions } from './schema';
 
-const sqliteDB = new Database('./data.db');
-const db = drizzle(sqliteDB, {
+const postgresUrl = `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
+
+async function migratePostgres() {
+    const migrationClient = postgres(postgresUrl, { max: 1 });
+    logger.info('Running migrations...');
+
+    await migrate(drizzle(migrationClient), { migrationsFolder: 'drizzle' });
+
+    logger.info('Migrations complete');
+    await migrationClient.end();
+}
+
+const db = drizzle(postgres(postgresUrl), {
     schema: {
         posts,
         postTags,
@@ -14,12 +26,8 @@ const db = drizzle(sqliteDB, {
         discordPost,
         users,
         versions,
-        inspirations,
+        relatedPost,
     },
 });
-
-logger.info('Running migrations...');
-migrate(db, { migrationsFolder: 'drizzle' });
-logger.info('Migrations complete');
 
 export { db };

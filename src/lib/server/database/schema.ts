@@ -1,8 +1,22 @@
-import { sql } from 'drizzle-orm';
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { init } from '@paralleldrive/cuid2';
+import Alea from 'alea';
+import { index, integer, pgSchema, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
+import { int4range } from './custom-int4range';
 
-export const users = sqliteTable('users', {
-    id: text('id').primaryKey(),
+const randomGen = Alea();
+
+const cuid = init({
+    length: 10,
+    random: () => randomGen.next(),
+    fingerprint: process.env.CUID_FINGERPRINT,
+});
+
+export const schema = pgSchema('kustos');
+
+export const users = schema.table('users', {
+    id: text('id')
+        .primaryKey()
+        .$defaultFn(() => cuid()),
     username: text('username').notNull(),
     displayName: text('display_name').notNull(),
     accessToken: text('access_token'),
@@ -11,10 +25,12 @@ export const users = sqliteTable('users', {
 });
 
 // TODO - downloads tracking
-export const posts = sqliteTable(
+export const posts = schema.table(
     'posts',
     {
-        id: text('id').primaryKey(),
+        id: text('id')
+            .primaryKey()
+            .$defaultFn(() => cuid()),
         authorId: text('author_id')
             .notNull()
             .references(() => users.id),
@@ -23,9 +39,7 @@ export const posts = sqliteTable(
         summary: text('summary').notNull(),
         description: text('description').notNull(),
         slug: text('slug').notNull(),
-        createdTime: integer('created_time', { mode: 'timestamp' })
-            .notNull()
-            .default(sql`(unixepoch())`),
+        createdTime: timestamp('created_time').defaultNow(),
     },
     (table) => {
         return {
@@ -34,10 +48,12 @@ export const posts = sqliteTable(
     },
 );
 
-export const postTags = sqliteTable(
+export const postTags = schema.table(
     'post_tags',
     {
-        id: text('id').primaryKey(),
+        id: text('id')
+            .primaryKey()
+            .$defaultFn(() => cuid()),
         postId: text('post_id')
             .notNull()
             .references(() => posts.id),
@@ -51,26 +67,30 @@ export const postTags = sqliteTable(
 );
 
 // TODO - add post version as well in this.
-export const versions = sqliteTable(
+export const versions = schema.table(
     'versions',
     {
-        id: integer('id').primaryKey({ autoIncrement: true }),
+        id: text('id')
+            .primaryKey()
+            .$defaultFn(() => cuid()),
         postId: text('post_id')
             .notNull()
             .references(() => posts.id),
-        version: text('version').notNull(),
+        versions: int4range('versions').notNull(),
     },
     (table) => {
         return {
-            versionIdx: index('version_idx').on(table.postId, table.version),
+            versionIdx: index('version_idx').on(table.postId, table.versions),
         };
     },
 );
 
-export const members = sqliteTable(
+export const members = schema.table(
     'members',
     {
-        id: text('id').primaryKey(),
+        id: text('id')
+            .primaryKey()
+            .$defaultFn(() => cuid()),
         userId: text('user_id')
             .notNull()
             .references(() => users.id),
@@ -86,26 +106,31 @@ export const members = sqliteTable(
     },
 );
 
-export const inspirations = sqliteTable(
-    'inspirations',
+export const relatedPost = schema.table(
+    'related_post',
     {
-        id: text('id').primaryKey(),
-        postId: text('post_id')
+        id: text('id')
+            .primaryKey()
+            .$defaultFn(() => cuid()),
+        post: text('post_id')
             .notNull()
             .references(() => posts.id),
-        inspiredBy: text('inspired_by')
+        relatedPost: text('related_post_id')
             .notNull()
             .references(() => posts.id),
+        relationship: text('relationship').notNull(), // 'variant' | 'inspired'
     },
     (table) => {
         return {
-            inspirationIdx: index('inspiration_idx').on(table.postId, table.inspiredBy),
+            relationshipIdx: index('relationship_idx').on(table.post, table.relationship),
         };
     },
 );
 
-export const discordPost = sqliteTable('discord_post', {
-    id: text('id').primaryKey(),
+export const discordPost = schema.table('discord_post', {
+    id: text('id')
+        .primaryKey()
+        .$defaultFn(() => cuid()),
     postId: text('post_id')
         .notNull()
         .references(() => posts.id),
@@ -114,10 +139,12 @@ export const discordPost = sqliteTable('discord_post', {
     messageId: text('message_id').notNull(),
 });
 
-export const blobs = sqliteTable(
+export const blobs = schema.table(
     'blobs',
     {
-        id: text('id').primaryKey(),
+        id: text('id')
+            .primaryKey()
+            .$defaultFn(() => cuid()),
         postId: text('post_id')
             .notNull()
             .references(() => posts.id),

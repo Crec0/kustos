@@ -2,7 +2,7 @@
     import type { PageData } from './$types';
     import { filesProxy, superForm } from 'sveltekit-superforms/client';
     import FileInput from '$components/FileInput.svelte';
-    import { type Writable, writable } from 'svelte/store';
+    import { type Readable, type Writable, writable } from 'svelte/store';
     import { type Channel, type Tag } from '$lib/schemas/discord-schema';
     import { postForm } from '$lib/schemas/post-form-schema';
     import { Button } from '$components/ui/form';
@@ -24,6 +24,7 @@
         resetForm: false,
     });
 
+    let selectedVersions: Readable<string[]>;
     const schemProxy = filesProxy(form, 'schematic');
     const imgProxy = filesProxy(form, 'image');
 
@@ -103,6 +104,10 @@
         for (const file of $schemProxy) {
             e.formData.append('schematic', file);
         }
+        e.formData.delete('versions');
+        for (const version of $selectedVersions) {
+            e.formData.append('versions', version);
+        }
     };
 </script>
 
@@ -118,7 +123,7 @@
             <CardTitle class="pl-2">Version</CardTitle>
         </CardHeader>
         <CardContent class="p-0">
-            <VersionSelector bind:selectedVersions={$form.versions} parsedVersions={data.versions} />
+            <VersionSelector bind:selectedVersions parsedVersions={data.versions} />
         </CardContent>
     </Card>
 
