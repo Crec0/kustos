@@ -1,48 +1,69 @@
 import { z } from 'zod';
 
-export interface VersionManifest {
+interface VersionManifest {
+    $schema: string;
     latest: Latest;
     versions: Version[];
 }
 
-export interface Latest {
-    release: string;
+interface Latest {
+    old_alpha: string;
+    classic_server: string;
+    alpha_server: string;
+    old_beta: string;
     snapshot: string;
+    release: string;
+    pending: string;
 }
 
-export interface Version {
+interface Version {
     id: string;
     type: VersionType;
     url: string;
-    time: Date;
+    time?: Date;
     releaseTime: Date;
+    details: string;
 }
 
-export enum VersionType {
+enum VersionType {
+    AlphaServer = 'alpha_server',
+    ClassicServer = 'classic_server',
     OldAlpha = 'old_alpha',
     OldBeta = 'old_beta',
+    Pending = 'pending',
     Release = 'release',
     Snapshot = 'snapshot',
 }
 
-export type ParsedVersions = { [key: string]: 0 | 1 | 2 };
-
-export const latestSchema = z.object({
-    release: z.string(),
-    snapshot: z.string(),
+const latestSchema = z.object({
+    old_alpha: z.string().optional(),
+    classic_server: z.string().optional(),
+    alpha_server: z.string().optional(),
+    old_beta: z.string().optional(),
+    snapshot: z.string().optional(),
+    release: z.string().optional(),
+    pending: z.string().optional(),
 });
 
-export const typeSchema = z.nativeEnum(VersionType);
+const typeSchema = z.nativeEnum(VersionType);
 
-export const versionSchema = z.object({
+const versionSchema = z.object({
     id: z.string(),
     type: typeSchema,
-    url: z.string(),
-    time: z.string().datetime({ offset: true }),
-    releaseTime: z.string().datetime({ offset: true }),
+    url: z.string().optional(),
+    time: z.string().optional(),
+    releaseTime: z.string().optional(),
+    details: z.string().optional(),
 });
 
 export const versionManifestSchema = z.object({
     latest: latestSchema,
     versions: z.array(versionSchema),
 });
+
+export type ParsedVersions = {
+    [key: string]: {
+        id: number;
+        isSnapshot: boolean;
+    };
+};

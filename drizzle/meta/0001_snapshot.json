@@ -1,7 +1,5 @@
 {
-  "id": "2af1fd47-08c6-4fa0-8d81-d6cf79c354bf",
-  "prevId": "ee5db6bd-b901-49b4-8275-9d7f7dc475c3",
-  "version": "6",
+  "version": "7",
   "dialect": "postgresql",
   "tables": {
     "kustos.blobs": {
@@ -35,28 +33,41 @@
       },
       "indexes": {
         "blob_idx": {
-          "name": "blob_idx",
           "columns": [
-            "id",
-            "post_id"
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "blob_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "blobs_post_id_posts_id_fk": {
           "name": "blobs_post_id_posts_id_fk",
           "tableFrom": "blobs",
-          "tableTo": "posts",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -102,16 +113,16 @@
         "discord_post_post_id_posts_id_fk": {
           "name": "discord_post_post_id_posts_id_fk",
           "tableFrom": "discord_post",
-          "tableTo": "posts",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -148,42 +159,55 @@
       },
       "indexes": {
         "member_idx": {
-          "name": "member_idx",
           "columns": [
-            "user_id",
-            "post_id"
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "member_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "members_user_id_users_id_fk": {
           "name": "members_user_id_users_id_fk",
           "tableFrom": "members",
-          "tableTo": "users",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "members_post_id_posts_id_fk": {
           "name": "members_post_id_posts_id_fk",
           "tableFrom": "members",
-          "tableTo": "posts",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -214,28 +238,41 @@
       },
       "indexes": {
         "tag_idx": {
-          "name": "tag_idx",
           "columns": [
-            "post_id",
-            "id"
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "tag_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "post_tags_post_id_posts_id_fk": {
           "name": "post_tags_post_id_posts_id_fk",
           "tableFrom": "post_tags",
-          "tableTo": "posts",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -297,27 +334,35 @@
       },
       "indexes": {
         "post_idx": {
-          "name": "post_idx",
           "columns": [
-            "id"
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": true
+          "with": {},
+          "name": "post_idx",
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "posts_author_id_users_id_fk": {
           "name": "posts_author_id_users_id_fk",
           "tableFrom": "posts",
-          "tableTo": "users",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "author_id"
           ],
+          "tableTo": "users",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -354,42 +399,55 @@
       },
       "indexes": {
         "relationship_idx": {
-          "name": "relationship_idx",
           "columns": [
-            "post_id",
-            "relationship"
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "relationship",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "relationship_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "related_post_post_id_posts_id_fk": {
           "name": "related_post_post_id_posts_id_fk",
           "tableFrom": "related_post",
-          "tableTo": "posts",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "related_post_related_post_id_posts_id_fk": {
           "name": "related_post_related_post_id_posts_id_fk",
           "tableFrom": "related_post",
-          "tableTo": "posts",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "related_post_id"
           ],
+          "tableTo": "posts",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -466,28 +524,41 @@
       },
       "indexes": {
         "version_idx": {
-          "name": "version_idx",
           "columns": [
-            "post_id",
-            "versions"
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "versions",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "version_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "versions_post_id_posts_id_fk": {
           "name": "versions_post_id_posts_id_fk",
           "tableFrom": "versions",
-          "tableTo": "posts",
-          "schemaTo": "kustos",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
+          "schemaTo": "kustos",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -499,8 +570,10 @@
     "kustos": "kustos"
   },
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "2af1fd47-08c6-4fa0-8d81-d6cf79c354bf",
+  "prevId": "ee5db6bd-b901-49b4-8275-9d7f7dc475c3"
 }

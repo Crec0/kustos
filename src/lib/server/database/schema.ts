@@ -1,10 +1,9 @@
 import { init } from '@paralleldrive/cuid2';
 import Alea from 'alea';
-import { index, integer, pgSchema, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, pgSchema, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 import { int4range } from './custom-int4range';
 
 const randomGen = Alea();
-
 const cuid = init({
     length: 10,
     random: () => randomGen.next(),
@@ -24,7 +23,6 @@ export const users = schema.table('users', {
     expiry: integer('expiry'),
 });
 
-// TODO - downloads tracking
 export const posts = schema.table(
     'posts',
     {
@@ -41,11 +39,9 @@ export const posts = schema.table(
         slug: text('slug').notNull(),
         createdTime: timestamp('created_time').defaultNow(),
     },
-    (table) => {
-        return {
-            postIdx: uniqueIndex('post_idx').on(table.id),
-        };
-    },
+    (table) => ({
+        postIdx: uniqueIndex('post_idx').on(table.id),
+    }),
 );
 
 export const postTags = schema.table(
@@ -59,14 +55,11 @@ export const postTags = schema.table(
             .references(() => posts.id),
         tagName: text('tag_name').notNull(),
     },
-    (table) => {
-        return {
-            tagIdx: index('tag_idx').on(table.postId, table.id),
-        };
-    },
+    (table) => ({
+        tagIdx: index('tag_idx').on(table.postId, table.id),
+    }),
 );
 
-// TODO - add post version as well in this.
 export const versions = schema.table(
     'versions',
     {
@@ -78,11 +71,10 @@ export const versions = schema.table(
             .references(() => posts.id),
         versions: int4range('versions').notNull(),
     },
-    (table) => {
-        return {
-            versionIdx: index('version_idx').on(table.postId, table.versions),
-        };
-    },
+    (table) => ({
+        versionIdx: index('version_idx').using('gist', table.versions),
+        versionsPostIdx: index('versions_post_idx').using('hash', table.postId),
+    }),
 );
 
 export const members = schema.table(
@@ -99,11 +91,9 @@ export const members = schema.table(
             .references(() => posts.id),
         role: text('role').notNull(),
     },
-    (table) => {
-        return {
-            memberIdx: index('member_idx').on(table.userId, table.postId),
-        };
-    },
+    (table) => ({
+        memberIdx: index('member_idx').on(table.userId, table.postId),
+    }),
 );
 
 export const relatedPost = schema.table(
@@ -120,11 +110,9 @@ export const relatedPost = schema.table(
             .references(() => posts.id),
         relationship: text('relationship').notNull(), // 'variant' | 'inspired'
     },
-    (table) => {
-        return {
-            relationshipIdx: index('relationship_idx').on(table.post, table.relationship),
-        };
-    },
+    (table) => ({
+        relationshipIdx: index('relationship_idx').on(table.post, table.relationship),
+    }),
 );
 
 export const discordPost = schema.table('discord_post', {
@@ -151,9 +139,24 @@ export const blobs = schema.table(
         name: text('name').notNull(),
         kind: text('kind').notNull(), // 'image' | 'file' | 'icon'
     },
-    (table) => {
-        return {
-            blobIdx: index('blob_idx').on(table.id, table.postId),
-        };
-    },
+    (table) => ({
+        blobIdx: index('blob_idx').on(table.id, table.postId),
+    }),
 );
+
+export const mcVersions = schema.table(
+    'mc_versions',
+    {
+        id: integer('id').primaryKey(),
+        version: text('version').notNull().unique(),
+        isSnapshot: boolean('is_snapshot').notNull(),
+    },
+    (table) => ({
+        versionIdx: index('mc_version_idx').using('hash', table.version),
+    }),
+);
+
+export const config = schema.table('config', {
+    key: text('key').notNull().unique().primaryKey(),
+    value: text('value').notNull(),
+});

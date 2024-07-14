@@ -128,6 +128,42 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "kustos.mc_versions": {
+      "name": "mc_versions",
+      "schema": "kustos",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "version": {
+          "name": "version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_snapshot": {
+          "name": "is_snapshot",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "mc_versions_version_unique": {
+          "name": "mc_versions_version_unique",
+          "columns": [
+            "version"
+          ],
+          "nullsNotDistinct": false
+        }
+      }
+    },
     "kustos.members": {
       "name": "members",
       "schema": "kustos",
@@ -515,9 +551,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "version": {
-          "name": "version",
-          "type": "text",
+        "versions": {
+          "name": "versions",
+          "type": "int4range",
           "primaryKey": false,
           "notNull": true
         }
@@ -532,7 +568,7 @@
               "nulls": "last"
             },
             {
-              "expression": "version",
+              "expression": "versions",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -574,6 +610,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "ee5db6bd-b901-49b4-8275-9d7f7dc475c3",
-  "prevId": "00000000-0000-0000-0000-000000000000"
+  "id": "573062ae-eafb-4c74-8ec1-db40c2c89f67",
+  "prevId": "2af1fd47-08c6-4fa0-8d81-d6cf79c354bf"
 }
