@@ -15,11 +15,16 @@
     const versions = Object.keys(parsedVersions);
     const showSnapshots: Writable<boolean> = writable(false);
 
-    const allSelectableVersions = derived([showSnapshots], ([oldShowSnapshots]) => {
-        return Object.entries(parsedVersions)
-            .filter(([_, vType]) => oldShowSnapshots || vType !== 2)
-            .map(([version, _]) => version)
-            .toReversed();
+    const allSelectableVersions = derived([showSnapshots], ([$showSnapshots]) => {
+        const selectableVersions: Record<string, number> = {};
+        Object.entries(parsedVersions)
+            .reverse()
+            .forEach(([v, { isSnapshot, id }]) => {
+                if ($showSnapshots || !isSnapshot) {
+                    selectableVersions[v] = id;
+                }
+            });
+        return selectableVersions;
     });
 
     type RangeComponent = {

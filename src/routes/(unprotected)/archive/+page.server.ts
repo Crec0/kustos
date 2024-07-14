@@ -1,4 +1,4 @@
-import { db } from '$lib/server/database';
+import { db } from '$lib/server';
 import { blobs, posts } from '$lib/server/database/schema';
 import { and, eq } from 'drizzle-orm';
 import type { PageServerLoad } from '../../(protected)/editor/$types';

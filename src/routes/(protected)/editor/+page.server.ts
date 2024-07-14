@@ -1,8 +1,7 @@
 import { type Guild } from '$lib/schemas/discord-schema';
 import type { ParsedVersions } from '$lib/schemas/mc-versions-schema';
 import { postForm } from '$lib/schemas/post-form-schema';
-import { logger } from '$lib/server';
-import { db } from '$lib/server/database';
+import { db, logger } from '$lib/server';
 import { blobs, posts } from '$lib/server/database/schema';
 import { upload } from '$lib/server/s3';
 import { error, fail } from '@sveltejs/kit';

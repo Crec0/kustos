@@ -6,21 +6,25 @@
     import VirtualList from 'svelte-tiny-virtual-list';
     import Check from 'lucide-svelte/icons/check';
 
-    export let versions: Readable<string[]>;
+    export let versions: Readable<Record<string, number>>;
+
     export let placeHolder: string;
 
     export let value: string = '';
+    export let selectedId = -1;
 
     let searchValue = writable('');
 
     const filteredVersions = derived([versions, searchValue], ([$versions, $searchValue]) => {
-        return $versions.filter((v) => v.includes($searchValue));
+        return Object.entries($versions).filter(([v]) => v.includes($searchValue));
     });
 
     let open = false;
 
     function selectVersion(idx: number) {
-        value = $filteredVersions[idx];
+        const selection = $filteredVersions[idx];
+        value = selection[0];
+        selectedId = selection[1];
         open = false;
     }
 </script>
@@ -30,7 +34,7 @@
         <PopoverTrigger asChild let:builder>
             <Button
                 builders={[builder]}
-                class="flex w-[180px] min-w-fit items-center p-2"
+                class="flex w-[180px] min-w-fit items-center p-2 text-base"
                 role="combobox"
                 type="button"
                 variant="outline"
@@ -51,10 +55,10 @@
                         class="grid h-full w-full grid-cols-[2rem_1fr] items-center justify-items-start gap-2 px-2 hover:bg-accent"
                         on:click|preventDefault={() => selectVersion(index)}
                     >
-                        {#if value === $filteredVersions[index]}
+                        {#if selectedId === $filteredVersions[index][1]}
                             <Check class="ml-1" />
                         {/if}
-                        <span class="col-start-2">{$filteredVersions[index]}</span>
+                        <span class="col-start-2">{$filteredVersions[index][0]}</span>
                     </button>
                 </div>
             </VirtualList>

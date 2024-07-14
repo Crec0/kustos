@@ -1,31 +1,14 @@
-import { createPrivateKey, createPublicKey } from 'crypto';
+import { createDB, migrateDB } from '$lib/server/database';
+import { createLogger } from '$lib/server/utils/logger';
 
-import { PRIVATE_KEY } from '$env/static/private';
-import { PUBLIC_KEY } from '$env/static/public';
-import { Logger } from '@tsed/logger';
-import '@tsed/logger-file';
+const logger = createLogger();
+const { pgClient, drizzle: db } = createDB();
 
-export const privateKey = createPrivateKey({
-    key: Buffer.from(PRIVATE_KEY, 'base64'),
-    format: 'pem',
-});
+(async () => {
+    logger.info('Starting server...');
+    await migrateDB();
 
-export const publicKey = createPublicKey({
-    key: Buffer.from(PUBLIC_KEY, 'base64'),
-    format: 'pem',
-});
+    logger.info('Server started.');
+})();
 
-export const logger = new Logger('Main');
-
-logger.appenders
-    .set('file', {
-        type: 'file',
-        filename: `./logs/latest.log`,
-        layout: { type: 'basic' },
-        pattern: '.yyyy-MM-dd',
-        levels: ['info', 'warn', 'error', 'fatal'],
-    })
-    .set('console', {
-        type: 'console',
-        levels: ['info', 'debug', 'trace', 'warn', 'error', 'fatal'],
-    });
+export { db, logger };
