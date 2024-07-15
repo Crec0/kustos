@@ -24,7 +24,7 @@
         resetForm: false,
     });
 
-    let selectedVersions: Readable<string[]>;
+    let processedRanges: Readable<number[][]>;
     const schemProxy = filesProxy(form, 'schematic');
     const imgProxy = filesProxy(form, 'image');
 
@@ -105,8 +105,8 @@
             e.formData.append('schematic', file);
         }
         e.formData.delete('versions');
-        for (const version of $selectedVersions) {
-            e.formData.append('versions', version);
+        for (const version of $processedRanges) {
+            e.formData.append('versions', `[${version[0]},${version[1]}]`);
         }
     };
 </script>
@@ -123,7 +123,7 @@
             <CardTitle class="pl-2">Version</CardTitle>
         </CardHeader>
         <CardContent class="p-0">
-            <VersionSelector bind:selectedVersions parsedVersions={data.versions} />
+            <VersionSelector bind:processedRanges parsedVersions={data.versions} />
         </CardContent>
     </Card>
 

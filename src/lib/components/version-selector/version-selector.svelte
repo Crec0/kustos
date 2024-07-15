@@ -12,7 +12,6 @@
 
     export let parsedVersions: ParsedVersions;
 
-    const versions = Object.keys(parsedVersions);
     const showSnapshots: Writable<boolean> = writable(false);
 
     const allSelectableVersions = derived([showSnapshots], ([$showSnapshots]) => {
@@ -29,29 +28,39 @@
 
     type RangeComponent = {
         id: string;
-        start: string;
-        end: string;
+        start: number;
+        end: number;
     };
 
     const ranges: Writable<Map<string, RangeComponent>> = writable(new Map());
 
-    export const selectedVersions = derived(ranges, ($ranges) => {
-        const selectedVersions = Array.from($ranges.values())
-            .map((range) => [range.start, range.end])
-            .filter(([start, end]) => start && end)
-            .reduce((acc, [start, end]) => {
-                const sIdx = versions.indexOf(start);
-                const eIdx = versions.indexOf(end);
-                versions.slice(Math.min(sIdx, eIdx), Math.max(sIdx, eIdx) + 1).forEach((v) => acc.add(v));
-                return acc;
-            }, new Set<string>());
-        return Array.from(selectedVersions).sort((a, b) => versions.indexOf(a) - versions.indexOf(b));
+    export const processedRanges = derived(ranges, ($ranges) => {
+        if ($ranges.size === 0) return [];
+
+        const infinityBar = [...$ranges.values()]
+            .map(({ start, end }) => [Math.min(start, end), Math.max(start, end)])
+            .sort((a, b) => a[0] - b[0]);
+
+        if (infinityBar.length === 0) return [];
+
+        const mergedRanges: number[][] = [infinityBar[0]];
+        for (const segment of infinityBar) {
+            const prev = mergedRanges[mergedRanges.length - 1];
+            if (prev[1] < segment[0]) {
+                mergedRanges.push(segment);
+            } else {
+                prev[1] = Math.max(prev[1], segment[1]);
+            }
+        }
+
+        console.log(JSON.stringify(mergedRanges));
+        return mergedRanges;
     });
 
     const addRange = () => {
         ranges.update((oldRanges) => {
             const newId = crypto.randomUUID();
-            return new Map(oldRanges).set(newId, { id: newId, start: '', end: '' });
+            return new Map(oldRanges).set(newId, { id: newId, start: 696969, end: 696969 });
         });
     };
 
@@ -76,12 +85,8 @@
     <CardContent class="flex flex-col gap-2 p-2 pt-0">
         {#each $ranges.entries() as [id, range], idx}
             <div class="flex gap-2">
-                <VersionsDropdown
-                    bind:value={range.start}
-                    placeHolder="Starting Version"
-                    versions={allSelectableVersions}
-                />
-                <VersionsDropdown bind:value={range.end} placeHolder="End Version" versions={allSelectableVersions} />
+                <VersionsDropdown bind:selectedVersionId={range.start} versions={allSelectableVersions} />
+                <VersionsDropdown bind:selectedVersionId={range.end} versions={allSelectableVersions} />
                 {#if $ranges.size === 1}
                     <Button variant="outline" class="cursor-default hover:bg-background" on:click={() => {}}>
                         <span class="h-4 w-4"> &nbsp; </span>

@@ -7,11 +7,9 @@
     import Check from 'lucide-svelte/icons/check';
 
     export let versions: Readable<Record<string, number>>;
+    export let selectedVersionId = 696969;
 
-    export let placeHolder: string;
-
-    export let value: string = '';
-    export let selectedId = -1;
+    let selectedVersion: string = 'Latest';
 
     let searchValue = writable('');
 
@@ -23,8 +21,8 @@
 
     function selectVersion(idx: number) {
         const selection = $filteredVersions[idx];
-        value = selection[0];
-        selectedId = selection[1];
+        selectedVersion = selection[0];
+        selectedVersionId = selection[1];
         open = false;
     }
 </script>
@@ -40,7 +38,7 @@
                 variant="outline"
             >
                 <ChevronsUpDown class="h-4 w-4 shrink-0 opacity-50" />
-                <span class="grow">{value || placeHolder}</span>
+                <span class="grow">{selectedVersion}</span>
             </Button>
         </PopoverTrigger>
         <PopoverContent class="w-[180px] p-0">
@@ -55,7 +53,7 @@
                         class="grid h-full w-full grid-cols-[2rem_1fr] items-center justify-items-start gap-2 px-2 hover:bg-accent"
                         on:click|preventDefault={() => selectVersion(index)}
                     >
-                        {#if selectedId === $filteredVersions[index][1]}
+                        {#if selectedVersionId === $filteredVersions[index][1]}
                             <Check class="ml-1" />
                         {/if}
                         <span class="col-start-2">{$filteredVersions[index][0]}</span>

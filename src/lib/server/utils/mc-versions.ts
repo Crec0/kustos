@@ -1,3 +1,4 @@
+import { MC_VERSION_MANIFEST_URL } from '$env/static/private';
 import { type ParsedVersions, versionManifestSchema } from '$lib/schemas/mc-versions-schema';
 import { db } from '$lib/server';
 import { config, mcVersions } from '$lib/server/database/schema';
@@ -7,7 +8,7 @@ import { eq } from 'drizzle-orm';
 
 const log = createLogger('mc-versions');
 const TWENTY_FOUR_HOURS = 1000 * 60 * 60 * 24;
-let cachedVersions: ParsedVersions;
+let cachedVersions: ParsedVersions | null = null;
 
 async function fetchVersions(): Promise<{ [key: string]: boolean }> {
     const response = await fetch(MC_VERSION_MANIFEST_URL);
@@ -42,6 +43,8 @@ async function refreshDB(): Promise<boolean> {
         isSnapshot,
     }));
 
+    formattedVersions.push({ id: 696969, version: 'Latest', isSnapshot: false });
+
     await db.delete(mcVersions);
     await db.insert(mcVersions).values(formattedVersions);
 
@@ -56,7 +59,7 @@ async function getMcVersions(): Promise<ParsedVersions> {
 
     if (currTime - prevFetchTime > TWENTY_FOUR_HOURS) {
         log.info('Refreshing mc versions');
-        cachedVersions = undefined;
+        cachedVersions = null;
 
         if (await refreshDB()) {
             await db
