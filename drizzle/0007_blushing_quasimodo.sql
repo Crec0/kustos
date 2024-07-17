@@ -1,0 +1,1 @@
+ALTER TABLE "kustos"."posts" DROP COLUMN IF EXISTS "version";

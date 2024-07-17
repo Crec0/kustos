@@ -106,7 +106,8 @@
         }
         e.formData.delete('versions');
         for (const version of $processedRanges) {
-            e.formData.append('versions', `[${version[0]},${version[1]}]`);
+            e.formData.append('versions', version[0].toString());
+            e.formData.append('versions', version[1].toString());
         }
     };
 </script>

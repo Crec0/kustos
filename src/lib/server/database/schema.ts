@@ -33,7 +33,6 @@ export const posts = schema.table(
             .notNull()
             .references(() => users.id),
         name: text('name').notNull(),
-        versions: text('version').notNull(),
         summary: text('summary').notNull(),
         description: text('description').notNull(),
         slug: text('slug').notNull(),

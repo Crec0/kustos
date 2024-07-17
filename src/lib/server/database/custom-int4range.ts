@@ -1,5 +1,5 @@
 import { customType } from 'drizzle-orm/pg-core';
-import { Range, parse as rangeParse, serialize as rangeSerialize } from 'postgres-range';
+import { Range, RANGE_LB_INC, RANGE_UB_INC, parse as rangeParse, serialize as rangeSerialize } from 'postgres-range';
 
 export interface RangeBound<T> {
     value: T;
@@ -25,6 +25,10 @@ export class Int4Range {
                   inclusive: this.range.isUpperBoundClosed(),
               }
             : null;
+    }
+
+    static from(start: number, end: number): Int4Range {
+        return new Int4Range(new Range(start, end, RANGE_LB_INC | RANGE_UB_INC));
     }
 }
 

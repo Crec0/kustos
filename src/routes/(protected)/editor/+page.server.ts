@@ -2,7 +2,8 @@ import { type Guild } from '$lib/schemas/discord-schema';
 import type { ParsedVersions } from '$lib/schemas/mc-versions-schema';
 import { postForm } from '$lib/schemas/post-form-schema';
 import { db, logger } from '$lib/server';
-import { blobs, posts } from '$lib/server/database/schema';
+import { Int4Range } from '$lib/server/database/custom-int4range';
+import { blobs, posts, versions } from '$lib/server/database/schema';
 import { upload } from '$lib/server/s3';
 import { error, fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -38,12 +39,16 @@ export const actions = {
 
         console.log(form.data);
 
+        const selectedVersions = form.data.versions.map((v) => +v);
+        if (selectedVersions.length % 2 !== 0) {
+            return fail(400, { form: withFiles(form), error: 'Versions must be in pairs' });
+        }
+
         const op = await db
             .insert(posts)
             .values({
                 name: form.data.name,
                 authorId: userID,
-                versions: form.data.versions.join(','),
                 description: form.data.description,
                 summary: 'PLACEHOLDER',
                 slug: 'PLACEHOLDER',
@@ -51,6 +56,14 @@ export const actions = {
             .returning();
 
         const postID = op[0].id;
+
+        const ranges = [];
+        for (let i = 0; i < selectedVersions.length; i += 2) {
+            const range = Int4Range.from(+selectedVersions[i], +selectedVersions[i + 1]);
+            ranges.push({ postId: postID, versions: range });
+        }
+
+        await db.insert(versions).values(ranges);
 
         await Promise.allSettled([
             ...uploadAllOf(form.data.schematic, postID, 'schematic'),
