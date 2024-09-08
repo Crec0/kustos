@@ -8,7 +8,7 @@
     import { Plus } from 'lucide-svelte';
     import { Card, CardContent, CardHeader, CardTitle } from '$components/ui/card';
     import Minus from 'lucide-svelte/icons/minus';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
 
     export let parsedVersions: ParsedVersions;
 
@@ -53,18 +53,19 @@
             }
         }
 
-        console.log(JSON.stringify(mergedRanges));
         return mergedRanges;
     });
 
-    const addRange = () => {
+    const addRange = async () => {
+        await tick();
         ranges.update((oldRanges) => {
             const newId = crypto.randomUUID();
             return new Map(oldRanges).set(newId, { id: newId, start: 696969, end: 696969 });
         });
     };
 
-    const removeRange = (id: string) => {
+    const removeRange = async (id: string) => {
+        await tick();
         ranges.update((oldRanges) => {
             const newRanges = new Map(oldRanges);
             newRanges.delete(id);
