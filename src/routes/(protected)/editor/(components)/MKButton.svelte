@@ -12,7 +12,7 @@
 </script>
 
 
-<Tooltip>
+<Tooltip openDelay={10}>
     <TooltipTrigger>
         <Button class='w-10 h-10 p-0' on:click={onClick} variant='outline'>
             <slot />
