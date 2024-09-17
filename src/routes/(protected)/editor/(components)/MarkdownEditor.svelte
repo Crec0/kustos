@@ -64,6 +64,7 @@
     import { Switch } from '$components/ui/switch';
     import { writable } from 'svelte/store';
 
+    // TODO: Add better theme and support better markdown.
     import '../../../../github.css';
     import { unified } from 'unified';
     import remarkParse from 'remark-parse';
