@@ -84,7 +84,7 @@
         </div>
     </CardHeader>
     <CardContent class="flex flex-col gap-2 p-2 pt-0">
-        {#each $ranges.entries() as [id, range], idx}
+        {#each $ranges.entries() as [id, range] (id)}
             <div class="flex gap-2">
                 <VersionsDropdown bind:selectedVersionId={range.start} versions={allSelectableVersions} />
                 <VersionsDropdown bind:selectedVersionId={range.end} versions={allSelectableVersions} />

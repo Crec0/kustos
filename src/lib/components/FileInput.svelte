@@ -1,9 +1,22 @@
-<script lang="ts">
-    import { Trash, Trash2, XIcon } from 'lucide-svelte';
-    import { type Unsubscriber, type Updater, writable, type Writable } from 'svelte/store';
-    import { Card, CardContent, CardHeader } from '$components/ui/card';
+<script lang='ts'>
+    import { Trash2 } from 'lucide-svelte';
+    import {
+        type Unsubscriber,
+        type Updater,
+        writable,
+        type Writable,
+    } from 'svelte/store';
+    import {
+        Card,
+        CardContent,
+        CardHeader,
+    } from '$components/ui/card';
     import { Button } from '$components/ui/button';
     import { cn } from '$utils';
+    import { tick } from 'svelte';
+
+    import '../../animation.pcss';
+
 
     export let accept: string;
     export let body: string;
@@ -24,9 +37,9 @@
     }
 
     function removeFile(fileToRemove: File) {
-        for (let i = 0; i < $filesArray.length; i++) {
+        for ( let i = 0; i < $filesArray.length; i++ ) {
             const file = $filesArray[i];
-            if (file.name === fileToRemove.name) {
+            if ( file.name === fileToRemove.name ) {
                 $filesArray.splice(i, 1);
             }
         }
@@ -35,24 +48,24 @@
     }
 
     let updateFiles = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
-        if (!event.currentTarget.files) return;
+        if ( !event.currentTarget.files ) return;
         const uploadedFiles = [];
-        for (let i = 0; i < event.currentTarget.files.length; i++) {
+        for ( let i = 0; i < event.currentTarget.files.length; i++ ) {
             const file = event.currentTarget.files[i];
-            if ($filesArray.some((f) => f.name === file.name)) {
+            if ( $filesArray.some((f) => f.name === file.name) ) {
                 continue;
             }
             uploadedFiles.push(file);
         }
-        $filesArray = [...$filesArray, ...uploadedFiles];
+        $filesArray = [ ...$filesArray, ...uploadedFiles ];
         event.currentTarget.value = '';
         update();
     };
 
     function removeAnimationCleanly(target: HTMLLabelElement) {
         const func = (pp: AnimationEvent) => {
-            if (pp && pp.target && pp.target instanceof HTMLLabelElement) {
-                pp.target.classList.remove('blinking');
+            if ( pp && pp.target && pp.target instanceof HTMLLabelElement ) {
+                pp.target.classList.remove('dragover', 'curvy-arrows');
             }
             target.removeEventListener('animationiteration', func);
         };
@@ -63,122 +76,99 @@
         ev: DragEvent & { currentTarget: EventTarget & HTMLLabelElement; dataTransfer: DataTransfer | null },
     ) {
         ev.preventDefault();
-        removeAnimationCleanly(ev.currentTarget);
 
-        if (ev.dataTransfer == null) return;
+        // TODO do something fancy with the dragover effect
+        // removeAnimationCleanly(ev.currentTarget);
+
+        if ( ev.dataTransfer == null ) return;
 
         const uploadedFiles = [];
-        for (let i = 0; i < ev.dataTransfer.files.length; i++) {
+        for ( let i = 0; i < ev.dataTransfer.files.length; i++ ) {
             const file = ev.dataTransfer.files[i];
-            if ($filesArray.some((f) => f.name === file.name)) {
+            if ( $filesArray.some((f) => f.name === file.name) ) {
                 continue;
             }
             uploadedFiles.push(file);
         }
 
-        $filesArray = [...$filesArray, ...uploadedFiles];
+        $filesArray = [ ...$filesArray, ...uploadedFiles ];
         update();
     }
 
-    function handleDragOver(ev: DragEvent & { currentTarget: EventTarget & HTMLLabelElement }) {
+    async function handleDragOver(ev: DragEvent & { currentTarget: EventTarget & HTMLLabelElement }) {
         ev.preventDefault();
+        await tick();
 
-        if (!ev.currentTarget.classList.contains('blinking')) {
-            ev.currentTarget.classList.add('blinking');
-        }
+        // TODO do something fancy with the dragover effect
+        // if ( !ev.currentTarget.classList.contains('dragover') ) {
+        //     ev.currentTarget.classList.add('dragover', 'curvy-arrows');
+        // }
+        //
+        // console.log(ev.currentTarget.classList);
     }
 
-    function handleDragEnd(ev: DragEvent & { currentTarget: EventTarget & HTMLLabelElement }) {
+    async function handleDragEnd(ev: DragEvent & { currentTarget: EventTarget & HTMLLabelElement }) {
         ev.preventDefault();
+        await tick();
+
+        console.log(ev.currentTarget.classList);
 
         removeAnimationCleanly(ev.currentTarget);
     }
 </script>
 
-<Card class={cn('w-full p-2', isImage ? '' : 'max-w-lg')}>
-    <CardHeader
-        class={cn(
-            'flex space-y-0 p-2',
-            $filesArray.length === 0 ? 'hidden' : '',
-            isImage ? 'flex-row flex-wrap gap-2' : 'flex-col space-y-1.5',
-        )}
-    >
-        {#each $filesArray as file (file.name)}
-            {#if isImage}
-                <div class="flex flex-col rounded bg-accent">
-                    <Button
-                        class="bg-secondary text-secondary-foreground"
-                        variant="destructive"
-                        id="thing"
-                        on:click={() => removeFile(file)}
-                    >
-                        <Trash2 class="h-6 w-6" />
-                    </Button>
-                    <img src={URL.createObjectURL(file)} alt={file.name} class="h-[12rem] object-contain p-2" />
-                </div>
-            {:else}
-                <div
-                    class="flex w-full items-center gap-x-2 rounded transition-colors has-[.SELECTION:hover]:bg-destructive/20 has-[.SELECTION:hover]:text-destructive-foreground"
-                >
-                    <span class="grow truncate p-2">
-                        {file.name}
-                    </span>
-                    <Button
-                        class="SELECTION mr-2 bg-secondary text-secondary-foreground"
-                        variant="destructive"
-                        on:click={() => removeFile(file)}
-                    >
-                        <Trash2 class="h-6 w-6" />
-                    </Button>
-                </div>
-            {/if}
-        {/each}
-    </CardHeader>
-    <CardContent class="p-2">
+<Card class={cn('w-full p-2')}>
+    <CardHeader class='p-2'>
         <label
-            class="hover:light:bg-accent/20 flex h-16 w-full cursor-pointer items-center justify-center rounded border-2 border-dashed transition-colors hover:border-accent hover:bg-accent/40 hover:text-foreground"
+            class='text-xl flex h-32 w-full cursor-pointer items-center justify-center rounded border-2 border-dashed border-accent transition-colors hover:bg-accent hover:text-accent-foreground hover:border-primary/50'
             for={name}
-            on:drop={dropHandler}
-            on:dragover={handleDragOver}
             on:dragend={handleDragEnd}
             on:dragleave={handleDragEnd}
+            on:dragover={handleDragOver}
+            on:drop={dropHandler}
         >
             {body}
         </label>
 
-        <input {accept} class="hidden" id={name} multiple {name} on:change={updateFiles} type="file" />
+        <input {accept} class='hidden' id={name} multiple {name} on:change={updateFiles} type='file' />
+    </CardHeader>
+    <CardContent
+        class={cn(
+            'flex space-y-0 p-2 transition-all',
+            $filesArray.length === 0 ? 'hidden' : '',
+            isImage ? 'flex-row flex-wrap gap-2' : 'flex-col space-y-1.5',
+        )}
+    >
+        <!-- TODO: Improve image quality coz its hella bad rn -->
+        {#each $filesArray as file (file.name)}
+            <div
+                class={cn(
+                    "flex items-center rounded has-[.SELECTION:hover]:ring-destructive ring-inset has-[.SELECTION:hover]:bg-destructive/40 has-[.SELECTION:hover]:text-destructive-foreground hover:ring-2 hover:ring-primary hover:bg-primary/40 transition-all",
+                    isImage ? 'flex-col' : 'w-full'
+                )}
+            >
+                {#if !isImage}
+                    <span class='grow truncate p-2 rounded'> {file.name} </span>
+                {/if}
+
+                <Button
+                    class={cn('SELECTION bg-destructive/20', isImage ? 'w-full' : '')}
+                    variant='destructive'
+                    on:click={() => removeFile(file)}
+                >
+                    <Trash2 class='h-6 w-6' />
+                </Button>
+
+                {#if isImage}
+                    <img src={URL.createObjectURL(file)} alt={file.name} class='h-[12rem] object-contain p-2 rounded' />
+                {/if}
+            </div>
+        {/each}
     </CardContent>
 </Card>
 
 <style>
     .blinking {
-        animation: blinking 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    @keyframes blinking {
-        0%,
-        100% {
-            border-color: hsl(var(--accent));
-            scale: 1;
-            translate: 0 0;
-        }
-
-        25% {
-            border-color: hsl(var(--primary));
-            scale: 1.05;
-            translate: -10px 0;
-        }
-
-        50% {
-            border-color: hsl(var(--primary));
-            scale: 1.1;
-            translate: 0 0;
-        }
-
-        75% {
-            border-color: hsl(var(--primary));
-            scale: 1.05;
-            translate: 10px 0;
-        }
+        border-color: var(--primary) / 50%;
     }
 </style>

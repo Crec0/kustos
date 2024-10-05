@@ -1,12 +1,16 @@
 import { z } from 'zod';
 
-export const postForm = z.object({
-    guild: z.string(),
-    channel: z.string(),
-    tag: z.string().array().max(5),
+export const credits = z.object({
     name: z.string(),
-    credits: z.string(),
+    userId: z.string().optional(),
+});
+
+export const postForm = z.object({
+    name: z.string(),
+    slug: z.string(),
+    credits: credits.array(),
     versions: z.string().array(),
+    summary: z.string(),
     description: z.string(),
     image: z
         .instanceof(File)
