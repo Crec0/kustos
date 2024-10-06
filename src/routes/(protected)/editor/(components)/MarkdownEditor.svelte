@@ -40,7 +40,10 @@
         toggleLineBeginning,
         toggleWrapper,
     } from '$lib/utils/codemirror';
-    import { Card } from '$components/ui/card';
+    import {
+        Card,
+        CardTitle,
+    } from '$components/ui/card';
     import {
         CardContent,
         CardHeader,
@@ -73,14 +76,12 @@
     import rehypeStringify from 'rehype-stringify';
 
 
-    let value = '';
+    export let value = '';
 
     let element: HTMLDivElement;
     let view: EditorViewType;
     let previewElem: HTMLDivElement;
     let preview = writable(false);
-
-    $: console.log($preview);
 
     const remark = unified()
         .use(remarkParse)
@@ -133,6 +134,7 @@
 
 <Card>
     <CardHeader class='p-2'>
+        <CardTitle class='font-semibold text-base mb-2'>Description</CardTitle>
         <div class='flex gap-2'>
             <MKButton name='Bold' onClick={() => toggleWrapper(view, LUT.BOLD)}>
                 <BoldIcon />
@@ -188,13 +190,13 @@
 
             <div class='flex space-x-2 items-center pr-2 ml-auto'>
                 <Switch bind:checked={$preview} id='preview-switch' on:click={parsePreview} />
-                <label for='preview-switch'>Preview</label>
+                <label for='preview-switch' class='font-normal'>Preview</label>
             </div>
         </div>
     </CardHeader>
     <CardContent class='p-0'>
         <Separator />
         <div bind:this={element} class={`codemirror-wrapper ${$preview ? "hidden" : ""}`} />
-        <div bind:this={previewElem} class={`markdown-body p-2 ${$preview ? "" : "hidden"}`}></div>
+        <div bind:this={previewElem} class={`markdown-body p-2 ${$preview ? "min-h-[36rem]" : "hidden"}`}></div>
     </CardContent>
 </Card>
