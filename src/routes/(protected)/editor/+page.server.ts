@@ -7,7 +7,11 @@ import { blobs, posts, versions } from '$lib/server/database/schema';
 import { upload } from '$lib/server/s3';
 import { error, fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
-import { superValidate, withFiles } from 'sveltekit-superforms/server';
+import {
+    message,
+    superValidate,
+    withFiles,
+} from 'sveltekit-superforms/server';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch }) => {
@@ -50,8 +54,8 @@ export const actions = {
                 name: form.data.name,
                 authorId: userID,
                 description: form.data.description,
-                summary: 'PLACEHOLDER',
-                slug: 'PLACEHOLDER',
+                summary: form.data.summary,
+                slug: form.data.slug,
             })
             .returning();
 
@@ -70,7 +74,7 @@ export const actions = {
             ...uploadAllOf(form.data.image, postID, 'image'),
         ]);
 
-        return { form: withFiles(form) };
+        return message(form, 'Post created');
     },
 };
 

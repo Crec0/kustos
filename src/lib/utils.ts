@@ -2,6 +2,11 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
+import { PUBLIC_URL } from '$env/static/public';
+
+export const publicUrl = () => `${PUBLIC_URL}`;
+
+export const onlyAlphaNumeric = (content: string) => content.replace(/[^a-zA-Z0-9-]/g, '-');
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
