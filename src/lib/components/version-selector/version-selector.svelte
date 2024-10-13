@@ -5,7 +5,7 @@
         writable,
     } from 'svelte/store';
     import VersionsDropdown from '$components/version-selector/versions-dropdown.svelte';
-    import type { ParsedVersions } from '$lib/schemas/mc-versions-schema';
+    import type { ParsedVersions } from '$lib/zod/mc-versions';
     import { Label } from '$components/ui/label';
     import { Switch } from '$components/ui/switch';
     import { Button } from '$components/ui/button';

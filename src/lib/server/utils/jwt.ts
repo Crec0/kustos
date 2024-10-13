@@ -4,7 +4,7 @@ import { db } from '$lib/server';
 import { users } from '$lib/server/database/schema';
 import { fetchDiscordOAuthToken, fetchDiscordOAuthUser } from '$lib/server/discord/http';
 import type { DiscordOAuth, DiscordUser } from '$lib/server/discord/schemas';
-import { type Failure, safeAwait } from '$lib/utils/safeAwait';
+import { type Failure, safeAwait } from '$lib/utils/safe-await';
 import { type Cookies, fail, type RequestEvent } from '@sveltejs/kit';
 import { createPrivateKey, createPublicKey } from 'crypto';
 import { eq } from 'drizzle-orm';

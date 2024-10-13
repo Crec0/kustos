@@ -7,7 +7,7 @@ export const credits = z.object({
 
 export const postForm = z.object({
     name: z.string(),
-    slug: z.string(),
+    status: z.string().default("public"),
     credits: credits.array(),
     versions: z.string().array(),
     summary: z.string(),

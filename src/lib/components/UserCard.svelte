@@ -2,7 +2,7 @@
     import { Avatar } from '@skeletonlabs/skeleton';
     import { readable } from 'svelte/store';
     import { onMount } from 'svelte';
-    import type { UserObject } from '$lib/schemas/discord-schema';
+    import type { UserObject } from '$lib/zod/discord';
 
     export let userID: string;
 

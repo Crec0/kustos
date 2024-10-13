@@ -1,9 +1,9 @@
 import { MC_VERSION_MANIFEST_URL } from '$env/static/private';
-import { type ParsedVersions, versionManifestSchema } from '$lib/schemas/mc-versions-schema';
+import { type ParsedVersions, versionManifestSchema } from '$lib/zod/mc-versions';
 import { db } from '$lib/server';
 import { config, mcVersions } from '$lib/server/database/schema';
 import { createLogger } from '$lib/server/utils/logger';
-import { safeAwait } from '$lib/utils/safeAwait';
+import { safeAwait } from '$lib/utils/safe-await';
 import { eq } from 'drizzle-orm';
 
 const log = createLogger('mc-versions');

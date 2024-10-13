@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { NameIdObject } from '$lib/schemas/discord-schema';
+    import type { NameIdObject } from '$lib/zod/discord';
 
     export let title: string;
     export let id: string;

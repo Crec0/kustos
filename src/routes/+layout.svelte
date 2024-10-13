@@ -1,12 +1,12 @@
 <script lang="ts">
-    import '../app.pcss';
+    import '$lib/css/app.pcss';
     import Img from '$lib/assets/kustos.svg';
     import type { LayoutServerData } from './$types';
     import LoginLogout from '$components/LoginLogout.svelte';
     import { page } from '$app/stores';
     import { Toaster } from '$components/ui/sonner';
     import NavElement from '$components/nav-element.svelte';
-    import { cn } from '$utils';
+    import { cn } from '$lib/utils/svelte';
     import { ModeWatcher, toggleMode } from 'mode-watcher';
     import { Moon, Sun } from 'lucide-svelte';
     import { Button } from '$components/ui/button';

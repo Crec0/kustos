@@ -1,6 +1,6 @@
 import { POSTGRES_DB, POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER } from '$env/static/private';
 import { createLogger } from '$lib/server/utils/logger';
-import { safeAwait } from '$lib/utils/safeAwait';
+import { safeAwait } from '$lib/utils/safe-await';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';

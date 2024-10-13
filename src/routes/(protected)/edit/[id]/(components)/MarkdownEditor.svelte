@@ -47,7 +47,7 @@
     import {
         CardContent,
         CardHeader,
-    } from '$components/ui/card/index.js';
+    } from '$components/ui/card';
     import {
         BoldIcon,
         EyeOffIcon,
@@ -68,7 +68,7 @@
     import { writable } from 'svelte/store';
 
     // TODO: Add better theme and support better markdown.
-    import '../../../../github.css';
+    import '$lib/css/github.css';
     import { unified } from 'unified';
     import remarkParse from 'remark-parse';
     import remarkGfm from 'remark-gfm';

@@ -1,4 +1,5 @@
-import { db, tokens } from '$lib/server/database';
+import { db } from '$lib/server';
+import { users } from '$lib/server/database/schema';
 import { error, json } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
@@ -8,7 +9,7 @@ export const GET = async ({ request: { headers } }): Promise<Response> => {
         error(403, 'Cannot access guild resource without logging in');
     }
 
-    const token = await db.query.tokens.findFirst({ where: eq(tokens.userID, userID) });
+    const token = await db.query.users.findFirst({ where: eq(users.id, userID) });
     if (token == null || token.accessToken == null) {
         error(403, 'No data found. please re-log');
     }

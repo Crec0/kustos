@@ -12,10 +12,10 @@
         CardHeader,
     } from '$components/ui/card';
     import { Button } from '$components/ui/button';
-    import { cn } from '$utils';
+    import { cn } from '$lib/utils/svelte';
     import { tick } from 'svelte';
 
-    import '../../animation.pcss';
+    import '$lib/css/animation.pcss';
 
 
     export let accept: string;

@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { Button } from '$components/ui/button/index.js';
+    import { Button } from '$components/ui/button';
     import {
         Tooltip,
         TooltipContent,

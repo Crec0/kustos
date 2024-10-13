@@ -1,6 +1,6 @@
 <script lang="ts">
     import DiscordLogo from '$lib/assets/discord.svelte';
-    import type { UserObject } from '$lib/schemas/discord-schema';
+    import type { UserObject } from '$lib/zod/discord';
     import { Button } from '$components/ui/button';
     import { Avatar, AvatarImage, AvatarFallback } from '$components/ui/avatar';
 

@@ -1,28 +1,35 @@
-<script lang="ts">
-	import { RadioGroup as RadioGroupPrimitive } from "bits-ui";
-	import Circle from "lucide-svelte/icons/circle";
-	import { cn } from "$lib/utils.js";
+<script lang='ts'>
+    import { RadioGroup as RadioGroupPrimitive } from 'bits-ui';
+    import { cn } from '$lib/utils/svelte.js';
 
-	type $$Props = RadioGroupPrimitive.ItemProps;
-	type $$Events = RadioGroupPrimitive.ItemEvents;
 
-	let className: $$Props["class"] = undefined;
-	export let value: $$Props["value"];
-	export { className as class };
+    type $$Props = RadioGroupPrimitive.ItemProps & {
+        value: string;
+    };
+    type $$Events = RadioGroupPrimitive.ItemEvents;
+
+    let className: $$Props['class'] = undefined;
+    export let value: $$Props['value'];
+    export { className as class };
 </script>
 
 <RadioGroupPrimitive.Item
-	{value}
-	class={cn(
-		"border-primary text-primary ring-offset-background focus-visible:ring-ring aspect-square h-4 w-4 rounded-full border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+    {...$$restProps}
+    class={cn(
+		"text-primary h-5 w-5 border rounded-full shadow focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
 		className
 	)}
-	{...$$restProps}
-	on:click
+    on:click
+    {value}
 >
-	<div class="flex items-center justify-center">
-		<RadioGroupPrimitive.ItemIndicator>
-			<Circle class="h-2.5 w-2.5 fill-current text-current" />
-		</RadioGroupPrimitive.ItemIndicator>
-	</div>
+    <div class='flex items-center justify-center translate-y-[-0.200rem]'>
+        <RadioGroupPrimitive.ItemIndicator class='flex items-center'>
+            <svg class='lucide lucide-circle-dot' fill='none' height='24' stroke='currentColor' stroke-linecap='round'
+                 stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='24'
+                 xmlns='http://www.w3.org/2000/svg'>
+                <circle cx='12' cy='12' r='10' />
+                <circle class='fill-primary' cx='12' cy='12' r='4' />
+            </svg>
+        </RadioGroupPrimitive.ItemIndicator>
+    </div>
 </RadioGroupPrimitive.Item>
