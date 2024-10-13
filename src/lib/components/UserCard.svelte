@@ -1,8 +1,12 @@
 <script lang="ts">
-    import { Avatar } from '@skeletonlabs/skeleton';
     import { readable } from 'svelte/store';
     import { onMount } from 'svelte';
     import type { UserObject } from '$lib/zod/discord';
+    import {
+        Avatar,
+        AvatarFallback,
+        AvatarImage,
+    } from '$components/ui/avatar';
 
     export let userID: string;
 
@@ -31,7 +35,10 @@
 {:else}
     <div class="card flex h-max flex-col items-center justify-center md:flex-row">
         <div class="p-3 pb-0 md:p-6 md:pb-6 md:pr-3">
-            <Avatar class="w-32 rounded-xl" background="bg-transparent" src={$userStore.avatarUrl} />
+            <Avatar class="w-32 rounded-xl">
+                <AvatarImage src={$userStore.avatarUrl} alt="User Avatar" class="rounded-xl" />
+                <AvatarFallback>{$userStore.username.slice(2).toLocaleUpperCase()}</AvatarFallback>
+            </Avatar>
         </div>
         <div class="flex flex-col justify-center p-3 md:p-6 md:pl-3">
             <div class="text-4xl font-bold">
