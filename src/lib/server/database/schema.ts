@@ -35,7 +35,7 @@ export const posts = schema.table(
         name: text('name').notNull(),
         summary: text('summary').notNull(),
         description: text('description').notNull(),
-        slug: text('slug').notNull(),
+        status: text('status').notNull(),
         createdTime: timestamp('created_time').defaultNow(),
     },
     (table) => ({

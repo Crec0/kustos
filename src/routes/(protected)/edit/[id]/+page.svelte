@@ -1,7 +1,6 @@
 <script lang='ts'>
     import type { PageData } from './$types';
     import {
-        stringProxy,
         filesProxy,
         superForm,
     } from 'sveltekit-superforms/client';
@@ -11,59 +10,34 @@
         type Writable,
         writable,
     } from 'svelte/store';
-    import { postForm } from '$lib/schemas/post-form-schema';
+    import { postForm } from '$lib/zod/post-form';
     import { Button } from '$components/ui/form';
     import VersionSelector from '$components/version-selector/version-selector.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
-    import { Card } from '$components/ui/card';
     import {
+        Card,
         CardContent,
         CardFooter,
-    } from '$components/ui/card/index.js';
+    } from '$components/ui/card';
     import MarkdownEditor from './(components)/MarkdownEditor.svelte';
+
     import {
-        onlyAlphaNumeric,
-        publicUrl,
-    } from '$utils';
+        RadioGroup,
+        RadioGroupItem,
+    } from '$components/ui/radio-group';
+    import { Label } from '$components/ui/label';
 
     export let data: PageData;
 
     let processedRanges: Readable<number[][]>;
-    const slugInputElementHolder: Writable<HTMLInputElement> = writable();
 
     const { form, enhance } = superForm(data.form, {
         validators: zod(postForm),
         resetForm: false,
-        onUpdate: ({ form: {data}}) => {
-            if ($slugInputElementHolder == null) return;
-
-            const namedSlug = onlyAlphaNumeric(data.name);
-            if (data.slug === namedSlug) {
-                data.slug = '';
-                $slugInputElementHolder.placeholder = namedSlug;
-            }
-        },
     });
 
     const schemProxy = filesProxy(form, 'schematic');
     const imgProxy = filesProxy(form, 'image');
-    const nameProxy = stringProxy(form, 'name', {empty: 'null'});
-
-    const updateSlugBasedOnName = () => {
-        if ($slugInputElementHolder == null) return;
-
-        const content = $form.slug.length > 0 ? $form.slug : $form.name;
-        const cleanContent = onlyAlphaNumeric(content);
-
-        if ($form.slug.length === 0) {
-            $slugInputElementHolder.placeholder = cleanContent;
-        } else {
-            $slugInputElementHolder.placeholder = '';
-            $form.slug = cleanContent;
-        }
-    }
-
-    nameProxy.subscribe(updateSlugBasedOnName);
 
     let manuallyPatchFormUploadData = (e: FormDataEvent & { currentTarget: EventTarget & HTMLFormElement }) => {
         e.formData.delete('image');
@@ -81,11 +55,6 @@
             e.formData.append('versions', version[0].toString());
             e.formData.append('versions', version[1].toString());
         }
-
-        if ($form.slug.length === 0) {
-            e.formData.delete('slug');
-            e.formData.append('slug', onlyAlphaNumeric($form.name));
-        }
     };
 
 </script>
@@ -98,7 +67,7 @@
     use:enhance
 >
     <Card class='w-full p-2'>
-        <CardContent class='p-0'>
+        <CardContent class='p-2'>
             <div class='relative mt-6'>
                 <label class='text-md absolute -translate-y-7' for='name'> Name </label>
                 <input
@@ -111,39 +80,34 @@
                 />
             </div>
         </CardContent>
-        <CardFooter class='p-0 pt-2 text-muted-foreground text-sm w-full'>
+        <CardFooter class='p-2 pt-0 text-muted-foreground text-sm w-full'>
             <span>Word length: {$form.name.length} / 64</span>
         </CardFooter>
     </Card>
 
     <Card class='w-full p-2'>
-        <CardContent class='p-0'>
-            <div class='relative mt-6'>
-                <label class='text-md absolute -translate-y-7' for='slug'> URL </label>
-                <div class='flex gap-0 align-center bg-accent rounded py-2 px-3'>
-                    <span class='text-muted-foreground'>
-                        {publicUrl()}/
-                    </span>
-                    <input
-                        bind:value={$form.slug}
-                        bind:this={$slugInputElementHolder}
-                        on:input={updateSlugBasedOnName}
-                        class='w-full pl-0 bg-accent placeholder:italic focus-visible:outline-none'
-                        id='slug'
-                        maxlength='64'
-                        name='slug'
-                        type='text'
-                    />
+        <CardContent class='p-2 space-y-2'>
+            <Label class='text-md' for='visibility-selector'> Visibility </Label>
+
+            <RadioGroup bind:value={$form.status} class='font-normal' id='visibility-selector'>
+                <div class='flex items-center'>
+                    <RadioGroupItem id='private' value='private' />
+                    <Label for='private' class='cursor-pointer pl-2  font-normal text-base'>Private</Label>
                 </div>
-            </div>
+                <div class='flex items-center'>
+                    <RadioGroupItem id='unlisted' value='unlisted' />
+                    <Label for='unlisted' class='cursor-pointer pl-2 font-normal text-base'>Unlisted</Label>
+                </div>
+                <div class='flex items-center'>
+                    <RadioGroupItem id='public' value='public' />
+                    <Label for='public' class='cursor-pointer pl-2  font-normal text-base'>Public</Label>
+                </div>
+            </RadioGroup>
         </CardContent>
-        <CardFooter class='p-0 pt-2 text-muted-foreground text-sm w-full'>
-            <span>Word length: {$form.slug.length} / 64</span>
-        </CardFooter>
     </Card>
 
     <Card class='w-full p-2'>
-        <CardContent class='p-0'>
+        <CardContent class='p-2'>
             <div class='relative mt-6'>
                 <label class='text-md absolute -translate-y-7' for='description'> Summary </label>
                 <textarea
@@ -156,7 +120,7 @@
                 />
             </div>
         </CardContent>
-        <CardFooter class='p-0 text-muted-foreground text-sm w-full'>
+        <CardFooter class='p-2 pt-0 text-muted-foreground text-sm w-full'>
             <span>Word length: {$form.summary.length} / 128</span>
         </CardFooter>
     </Card>

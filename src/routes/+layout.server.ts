@@ -1,4 +1,4 @@
-import type { UserObject } from '$lib/schemas/discord-schema';
+import type { UserObject } from '$lib/zod/discord';
 import { logger } from '$lib/server';
 import type { LayoutServerLoadEvent } from './$types';
 
