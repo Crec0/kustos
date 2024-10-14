@@ -101,9 +101,6 @@ importers:
       unified:
         specifier: ^11.0.5
         version: 11.0.5
-      vaul-svelte:
-        specifier: ^0.3.2
-        version: 0.3.2(svelte@4.2.19)
     devDependencies:
       '@codemirror/autocomplete':
         specifier: ^6.18.0
@@ -177,6 +174,9 @@ importers:
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
+      vaul-svelte:
+        specifier: ^0.3.2
+        version: 0.3.2(svelte@4.2.19)
       vite:
         specifier: ^5.4.3
         version: 5.4.3(@types/node@22.5.4)(sass@1.78.0)

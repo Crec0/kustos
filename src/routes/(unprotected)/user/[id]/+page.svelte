@@ -1,5 +1,5 @@
 <script lang="ts">
-    import UserCard from '$components/UserCard.svelte';
+    import UserCard from '$components/custom/ui/UserCard.svelte';
     import { page } from '$app/stores';
 </script>
 

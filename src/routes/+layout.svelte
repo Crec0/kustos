@@ -2,10 +2,10 @@
     import '$lib/css/app.pcss';
     import Img from '$lib/assets/kustos.svg';
     import type { LayoutServerData } from './$types';
-    import LoginLogout from '$components/LoginLogout.svelte';
+    import LoginLogout from './(components)/LoginLogout.svelte';
     import { page } from '$app/stores';
     import { Toaster } from '$components/ui/sonner';
-    import NavElement from '$components/nav-element.svelte';
+    import NavElement from './(components)/NavElement.svelte';
     import { cn } from '$lib/utils/svelte';
     import { ModeWatcher, toggleMode } from 'mode-watcher';
     import { Moon, Sun } from 'lucide-svelte';
@@ -33,7 +33,7 @@
             <nav class="flex items-baseline gap-6">
                 <NavElement href="/archive" name="Archive" />
                 {#if data.id}
-                    <NavElement href="/editor" name="Editor" />
+                    <NavElement href="/dashboard" name="Dashboard" />
                 {/if}
             </nav>
         </div>

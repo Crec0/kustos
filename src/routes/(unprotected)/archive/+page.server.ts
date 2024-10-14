@@ -1,7 +1,7 @@
 import { db } from '$lib/server';
 import { blobs, posts } from '$lib/server/database/schema';
 import { and, eq } from 'drizzle-orm';
-import type { PageServerLoad } from '../../(protected)/editor/$types';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url: { searchParams } }) => {
     const offset = Math.min(+(searchParams.get('offset') || '0'), 20);
