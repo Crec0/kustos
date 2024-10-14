@@ -57,6 +57,20 @@
       "when": 1721095138987,
       "tag": "0007_blushing_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1728659221676,
+      "tag": "0008_long_lionheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1728796152036,
+      "tag": "0009_living_tana_nile",
+      "breakpoints": true
     }
   ]
 }

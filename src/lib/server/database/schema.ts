@@ -137,6 +137,7 @@ export const blobs = schema.table(
             .references(() => posts.id),
         name: text('name').notNull(),
         kind: text('kind').notNull(), // 'image' | 'file' | 'icon'
+        bytes: integer('bytes').notNull(),
     },
     (table) => ({
         blobIdx: index('blob_idx').on(table.id, table.postId),

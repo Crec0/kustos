@@ -5,23 +5,29 @@ export const credits = z.object({
     userId: z.string().optional(),
 });
 
+export const PostStatus = {
+    Draft: 'draft',
+    Private: 'private',
+    Unlisted: 'unlisted',
+    Public: 'public',
+    Restricted: 'restricted',
+} as const;
+
+const postValueStatuses = Object.values(PostStatus) as unknown as readonly [string, ...string[]];
+
+const blob = z.object({
+    id: z.string(),
+    name: z.string(),
+    size: z.number(),
+});
+
 export const postForm = z.object({
     name: z.string(),
-    status: z.string().default("public"),
+    status: z.enum(postValueStatuses).default("public"),
     credits: credits.array(),
     versions: z.string().array(),
     summary: z.string(),
     description: z.string(),
-    image: z
-        .instanceof(File)
-        .refine((f) => f && f.size < 1024 * 1024 * 10, { message: 'Image size must be less than 10MiB' })
-        .array()
-        .max(10),
-    schematic: z
-        .instanceof(File)
-        .refine((f) => f && f.size < 1024 * 1024 * 10, { message: 'File size must be less than 10MiB' })
-        .array()
-        .max(10),
+    image: blob.array().max(10),
+    schematic: blob.array().max(10),
 });
-
-export type PostForm = typeof postForm;

@@ -1,0 +1,1 @@
+ALTER TABLE "kustos"."blobs" ADD COLUMN "bytes" integer NOT NULL default 0;

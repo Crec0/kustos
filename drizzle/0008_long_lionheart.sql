@@ -1,0 +1,1 @@
+ALTER TABLE "kustos"."posts" RENAME COLUMN "slug" TO "status";
