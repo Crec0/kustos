@@ -31,3 +31,5 @@ export const postForm = z.object({
     image: blob.array().max(10),
     schematic: blob.array().max(10),
 });
+
+export type BlobType = z.infer<typeof blob>;

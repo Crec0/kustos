@@ -11,7 +11,6 @@ import {
     posts,
     versions,
 } from '$lib/server/database/schema';
-import { upload } from '$lib/server/s3';
 import {
     error,
     fail,
@@ -22,21 +21,84 @@ import {
     superValidate,
     withFiles,
 } from 'sveltekit-superforms/server';
-import type { PageServerLoad } from './$types';
 import { eq } from 'drizzle-orm';
+import type { PageServerLoad } from './$types';
 
+
+const defaultForm = {
+    name: '',
+    status: 'public',
+    summary: '',
+    description: '',
+    credits: [],
+    versions: [] as number[],
+    image: [] as { name: string; id: string }[],
+    schematic: [] as { name: string; id: string }[],
+};
 
 export const load: PageServerLoad = async ({ fetch, params }) => {
-    const query = await db.select().from(posts).leftJoin(blobs, eq(posts.id, blobs.postId)).where(eq(posts.id, params.id));
-    if ( query.length === 0 ) {
+    const query = await db.select({
+            'authorId': posts.authorId,
+            'name': posts.name,
+            'summary': posts.summary,
+            'description': posts.description,
+            'status': posts.status,
+            'created_time': posts.createdTime,
+            'blobId': blobs.id,
+            'blobName': blobs.name,
+            'blobKind': blobs.kind,
+            'versionId': versions.id,
+            'versions': versions.versions,
+        })
+        .from(posts)
+        .leftJoin(blobs, eq(posts.id, blobs.postId))
+        .leftJoin(versions, eq(posts.id, versions.postId))
+        .where(eq(posts.id, params.id));
+
+    if (query.length === 0) {
         error(404, {
             message: `Post '${ params.id }' not found`,
         });
     }
 
-    // https://orm.drizzle.team/docs/joins#aggregating-results
+    const queryForm = query.reduce((acc, row) => {
+        if (row.name) acc.name = row.name;
+        if (row.status) acc.status = row.status;
+        if (row.summary) acc.summary = row.summary;
+        if (row.description) acc.description = row.description;
 
-    logger.info(query, 'query', params.id);
+        if (row.blobKind === 'image') {
+            acc.image.push({
+                name: row.blobName!,
+                id: row.blobId!,
+            });
+        } else if (row.blobKind === 'schematic') {
+            acc.schematic.push({
+                name: row.blobName!,
+                id: row.blobId!,
+            });
+        }
+
+        if (row.versions) {
+            const start = row.versions.start!;
+            const end = row.versions.end!;
+
+            acc.versions = [
+                ...new Set([
+                    ...acc.versions,
+                    start.inclusive ? start.value : start.value + 1,
+                    end.inclusive ? end.value : end.value - 1,
+                ]),
+            ];
+        }
+
+        return acc;
+    }, structuredClone(defaultForm));
+
+    // https://orm.drizzle.team/docs/joins#aggregating-results
+    // const formObject = postForm.parse(queryForm);
+
+    logger.info(queryForm);
 
     const [ form, guilds, mcVersions ] = await Promise.all([
         superValidate(zod(postForm)),
@@ -56,12 +118,12 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 export const actions = {
     default: async ({ request }) => {
         const form = await superValidate(request, zod(postForm));
-        if ( !form.valid ) {
+        if (!form.valid) {
             return fail(400, { form: withFiles(form) });
         }
 
         const userID = request.headers.get('discord-user-id');
-        if ( userID == null ) {
+        if (userID == null) {
             logger.error('discord-user-id is null. This shouldn\'t happen.');
             error(403, 'Invalid user id header');
         }
@@ -69,7 +131,7 @@ export const actions = {
         console.log(form.data);
 
         const selectedVersions = form.data.versions.map((v) => +v);
-        if ( selectedVersions.length % 2 !== 0 ) {
+        if (selectedVersions.length % 2 !== 0) {
             return fail(400, { form: withFiles(form), error: 'Versions must be in pairs' });
         }
 
@@ -94,22 +156,9 @@ export const actions = {
 
         await db.insert(versions).values(ranges);
 
-        await Promise.allSettled([
-            ...uploadAllOf(form.data.schematic, postID, 'schematic'),
-            ...uploadAllOf(form.data.image, postID, 'image'),
-        ]);
-
         return message(form, 'Post created');
     },
 };
-
-const uploadAllOf = (formData: File[], postID: string, kind: string) =>
-    formData.map(async (f) => {
-        const dd = await db.insert(blobs).values({ name: f.name, kind: kind, postId: postID }).returning();
-        const ddID = dd[0].id;
-        return upload(`${ kind }/${ postID }/${ ddID }`, f.arrayBuffer());
-    });
-    
 
 
 

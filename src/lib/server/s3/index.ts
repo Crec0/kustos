@@ -41,3 +41,7 @@ export const listBucket = async (prefix: string = '', recursive: boolean = false
 export const upload = async (name: string = '', stream: Promise<ArrayBuffer>) => {
     await minio.putObject(S3_BUCKET, name, Buffer.from(await stream));
 };
+
+export const deleteObject = async (name: string = '') => {
+    await minio.removeObject(S3_BUCKET, name);
+}
