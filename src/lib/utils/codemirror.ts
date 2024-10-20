@@ -4,21 +4,6 @@ import {
     type KeyBinding,
 } from '@codemirror/view';
 
-
-export const alwaysKeepMinimum25Lines = EditorView.updateListener.of((updateView) => {
-    if ( !updateView.heightChanged ) return;
-    const currLines = updateView.state.doc.lines;
-    const chars = updateView.state.doc.length;
-    const blanks = new Array(Math.max(0, 25 - currLines)).fill('\n').join('');
-    updateView.view.dispatch({
-        changes: {
-            from: chars,
-            to: chars,
-            insert: blanks,
-        },
-    });
-});
-
 export const kustosTheme = {
     '&': {
         color: 'var(--foreground)',

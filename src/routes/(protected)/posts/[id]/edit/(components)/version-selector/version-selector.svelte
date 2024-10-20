@@ -88,42 +88,35 @@
     onMount(() => addRange());
 </script>
 
-<Card class='w-max p-2'>
-    <CardHeader class='p-0'>
-        Version
+<Card class='border-0 w-max'>
+    <CardHeader class='px-0 py-2 flex flex-row'>
+        <Button on:click={addRange} variant='outline'>
+            Add Range
+        </Button>
+        <div class='flex min-w-fit items-center ml-auto gap-2'>
+            <Label class='font-normal text-sm' for='show-snapshots'>Show Snapshots</Label>
+            <Switch bind:checked={$showSnapshots} class='' id='show-snapshots' />
+        </div>
     </CardHeader>
-    <CardContent class='p-0'>
-        <Card class='border-0'>
-            <CardHeader class='px-0 py-2'>
-                <div class='flex min-w-fit items-center gap-2'>
-                    <Label class='font-normal' for='show-snapshots'>Show Snapshots</Label>
-                    <Switch bind:checked={$showSnapshots} class='' id='show-snapshots' />
-                </div>
-            </CardHeader>
-            <CardContent class='flex flex-col gap-2 p-0'>
-                {#each $ranges.entries() as [ id, range ] (id)}
-                    <div class='flex gap-2'>
-                        <VersionsDropdown bind:selectedVersionId={range.start} versions={allSelectableVersions} />
-                        <VersionsDropdown bind:selectedVersionId={range.end} versions={allSelectableVersions} />
-                        {#if $ranges.size === 1}
-                            <Button variant='outline' class='cursor-default hover:bg-background' on:click={() => {}}>
-                                <span class='h-4 w-4'> &nbsp; </span>
-                            </Button>
-                        {:else}
-                            <Button
-                                variant='outline'
-                                class='hover:bg-destructive hover:text-destructive-foreground'
-                                on:click={() => removeRange(id)}
-                            >
-                                <Minus class='h-4 w-4 shrink-0 opacity-50' />
-                            </Button>
-                        {/if}
-                    </div>
-                {/each}
-                <Button on:click={addRange} variant='outline'>
-                    <Plus class='h-4 w-4 shrink-0 opacity-50' />
-                </Button>
-            </CardContent>
-        </Card>
+    <CardContent class='flex flex-col gap-2 p-0 w-max'>
+        {#each $ranges.entries() as [ id, range ] (id)}
+            <div class='flex gap-2'>
+                <VersionsDropdown bind:selectedVersionId={range.start} versions={allSelectableVersions} />
+                <VersionsDropdown bind:selectedVersionId={range.end} versions={allSelectableVersions} />
+                {#if $ranges.size === 1}
+                    <Button variant='outline' class='cursor-default hover:bg-background' on:click={() => {}}>
+                        <span class='h-4 w-4'> &nbsp; </span>
+                    </Button>
+                {:else}
+                    <Button
+                        variant='outline'
+                        class='hover:bg-destructive hover:text-destructive-foreground'
+                        on:click={() => removeRange(id)}
+                    >
+                        <Minus class='h-4 w-4 shrink-0 opacity-50' />
+                    </Button>
+                {/if}
+            </div>
+        {/each}
     </CardContent>
 </Card>

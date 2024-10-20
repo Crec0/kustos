@@ -7,7 +7,6 @@
         highlightSpecialChars,
         highlightWhitespace,
         keymap,
-        lineNumbers,
     } from '@codemirror/view';
     import {
         defaultKeymap,
@@ -33,7 +32,6 @@
         markdownLanguage,
     } from '@codemirror/lang-markdown';
     import {
-        alwaysKeepMinimum25Lines,
         kustomKeybind,
         kustosTheme,
         LUT,
@@ -101,9 +99,7 @@
             state: EditorState.create({
                 doc: value,
                 extensions: [
-                    alwaysKeepMinimum25Lines,
                     EditorView.theme(kustosTheme),
-                    lineNumbers(),
                     highlightActiveLineGutter(),
                     highlightWhitespace(),
                     highlightSpecialChars(),
@@ -197,6 +193,6 @@
     <CardContent class='p-0'>
         <Separator />
         <div bind:this={element} class={`codemirror-wrapper ${$preview ? "hidden" : ""}`} />
-        <div bind:this={previewElem} class={`markdown-body p-2 ${$preview ? "min-h-[36rem]" : "hidden"}`}></div>
+        <div bind:this={previewElem} class={`markdown-body p-2 ${$preview ? "min-h-[24rem]" : "hidden"}`}></div>
     </CardContent>
 </Card>

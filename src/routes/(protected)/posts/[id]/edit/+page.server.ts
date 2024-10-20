@@ -1,29 +1,14 @@
 import { type Guild } from '$lib/zod/discord';
 import type { ParsedVersions } from '$lib/zod/mc-versions';
 import { postForm } from '$lib/zod/post-form';
-import {
-    db,
-    logger,
-} from '$lib/server';
+import { db, logger } from '$lib/server';
 import { Int4Range } from '$lib/server/database/custom-int4range';
-import {
-    blobs,
-    posts,
-    versions,
-} from '$lib/server/database/schema';
-import {
-    error,
-    fail,
-} from '@sveltejs/kit';
+import { blobs, posts, versions } from '$lib/server/database/schema';
+import { error, fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
-import {
-    message,
-    superValidate,
-    withFiles,
-} from 'sveltekit-superforms/server';
+import { message, superValidate, withFiles } from 'sveltekit-superforms/server';
 import { eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
-
 
 const defaultForm = {
     name: '',
@@ -38,18 +23,18 @@ const defaultForm = {
 
 export const load: PageServerLoad = async ({ fetch, params }) => {
     const query = await db.select({
-            'authorId': posts.authorId,
-            'name': posts.name,
-            'summary': posts.summary,
-            'description': posts.description,
-            'status': posts.status,
-            'created_time': posts.createdTime,
-            'blobId': blobs.id,
-            'blobName': blobs.name,
-            'blobKind': blobs.kind,
-            'versionId': versions.id,
-            'versions': versions.versions,
-        })
+        'authorId': posts.authorId,
+        'name': posts.name,
+        'summary': posts.summary,
+        'description': posts.description,
+        'status': posts.status,
+        'created_time': posts.createdTime,
+        'blobId': blobs.id,
+        'blobName': blobs.name,
+        'blobKind': blobs.kind,
+        'versionId': versions.id,
+        'versions': versions.versions,
+    })
         .from(posts)
         .leftJoin(blobs, eq(posts.id, blobs.postId))
         .leftJoin(versions, eq(posts.id, versions.postId))
@@ -57,7 +42,7 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 
     if (query.length === 0) {
         error(404, {
-            message: `Post '${ params.id }' not found`,
+            message: `Post '${params.id}' not found`,
         });
     }
 
@@ -100,10 +85,14 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 
     logger.info(queryForm);
 
-    const [ form, guilds, mcVersions ] = await Promise.all([
+    const [form, guilds, mcVersions] = await Promise.all([
         superValidate(zod(postForm)),
-        fetch('/api/discord/guilds').then((res) => res.json()) as Promise<Guild[]>,
-        fetch('/api/mc/versions').then((res) => res.json()) as Promise<ParsedVersions>,
+        fetch('/api/discord/guilds').then((res) => res.json()) as Promise<
+            Guild[]
+        >,
+        fetch('/api/mc/versions').then((res) => res.json()) as Promise<
+            ParsedVersions
+        >,
     ]);
 
     logger.info(form, 'form');
@@ -124,7 +113,7 @@ export const actions = {
 
         const userID = request.headers.get('discord-user-id');
         if (userID == null) {
-            logger.error('discord-user-id is null. This shouldn\'t happen.');
+            logger.error("discord-user-id is null. This shouldn't happen.");
             error(403, 'Invalid user id header');
         }
 
@@ -132,7 +121,10 @@ export const actions = {
 
         const selectedVersions = form.data.versions.map((v) => +v);
         if (selectedVersions.length % 2 !== 0) {
-            return fail(400, { form: withFiles(form), error: 'Versions must be in pairs' });
+            return fail(400, {
+                form: withFiles(form),
+                error: 'Versions must be in pairs',
+            });
         }
 
         const op = await db
@@ -149,8 +141,11 @@ export const actions = {
         const postID = op[0].id;
 
         const ranges = [];
-        for ( let i = 0; i < selectedVersions.length; i += 2 ) {
-            const range = Int4Range.from(+selectedVersions[i], +selectedVersions[i + 1]);
+        for (let i = 0; i < selectedVersions.length; i += 2) {
+            const range = Int4Range.from(
+                +selectedVersions[i],
+                +selectedVersions[i + 1],
+            );
             ranges.push({ postId: postID, versions: range });
         }
 
@@ -159,17 +154,3 @@ export const actions = {
         return message(form, 'Post created');
     },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

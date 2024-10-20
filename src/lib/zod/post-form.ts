@@ -22,10 +22,10 @@ const blob = z.object({
 });
 
 export const postForm = z.object({
-    name: z.string().max(64),
-    summary: z.string().max(64),
-    status: z.enum(postValueStatuses).default("public"),
-    description: z.string().max(1024),
+    name: z.string().min(3).max(64),
+    summary: z.string().min(3).max(64),
+    status: z.enum(postValueStatuses).default('public'),
+    description: z.string().min(3).max(1024),
     versions: z.string().array(),
     credits: credits.array(),
     schematic: blob.array().max(10),
