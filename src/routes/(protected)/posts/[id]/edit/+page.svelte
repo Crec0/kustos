@@ -159,7 +159,12 @@
         </Control>
     </Field>
 
-    <MarkdownEditor value={$formData.description} />
+    <Field {form} name='description'>
+        <Control let:attrs>
+            <Label> Description </Label>
+            <MarkdownEditor {...attrs} value={$formData.description} />
+        </Control>
+    </Field>
 
     <Field {form} name='schematic'>
         <Control let:attrs>

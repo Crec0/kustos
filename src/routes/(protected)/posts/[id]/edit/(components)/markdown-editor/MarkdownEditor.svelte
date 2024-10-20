@@ -40,7 +40,6 @@
     } from '$lib/utils/codemirror';
     import {
         Card,
-        CardTitle,
     } from '$components/ui/card';
     import {
         CardContent,
@@ -130,7 +129,6 @@
 
 <Card>
     <CardHeader class='p-2'>
-        <CardTitle class='font-semibold text-base mb-2'>Description</CardTitle>
         <div class='flex gap-2'>
             <MKButton name='Bold' onClick={() => toggleWrapper(view, LUT.BOLD)}>
                 <BoldIcon />

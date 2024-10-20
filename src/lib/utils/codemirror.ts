@@ -10,7 +10,7 @@ export const kustosTheme = {
         backgroundColor: `var(--background)`,
         padding: '0.5rem',
         fontSize: '1rem',
-        height: '35rem',
+        height: '24rem',
     },
     '.cm-scroller': {
         overflow: 'auto',
