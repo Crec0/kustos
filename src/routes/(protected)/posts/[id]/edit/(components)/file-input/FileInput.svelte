@@ -141,7 +141,7 @@
                     'flex-col space-y-1.5',
                 )}
             >
-                <ScrollArea class="w-full rounded h-[50vh]">
+                <ScrollArea class="w-full rounded max-h-[50vh]">
                     {#each $localBlobMap as [_, blob] (blob.name)}
                         <div
                             class="flex w-full items-center gap-2 rounded px-2 py-1 ring-inset transition-all hover:ring-primary hover:bg-primary/40 hover:ring-2 has-[.SELECTION:hover]:ring-destructive has-[.SELECTION:hover]:bg-destructive/40 has-[.SELECTION:hover]:text-destructive-foreground"
