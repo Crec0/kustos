@@ -17,8 +17,8 @@ const defaultForm = {
     description: '',
     credits: [],
     versions: [] as number[],
-    image: [] as { name: string; id: string }[],
-    schematic: [] as { name: string; id: string }[],
+    image: [] as { name: string; id: string; size: number}[],
+    schematic: [] as { name: string; id: string; size: number}[],
 };
 
 export const load: PageServerLoad = async ({ fetch, params }) => {
@@ -31,6 +31,7 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
         'created_time': posts.createdTime,
         'blobId': blobs.id,
         'blobName': blobs.name,
+        'blobSize': blobs.bytes,
         'blobKind': blobs.kind,
         'versionId': versions.id,
         'versions': versions.versions,
@@ -56,11 +57,13 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
             acc.image.push({
                 name: row.blobName!,
                 id: row.blobId!,
+                size: row.blobSize!,
             });
         } else if (row.blobKind === 'schematic') {
             acc.schematic.push({
                 name: row.blobName!,
                 id: row.blobId!,
+                size: row.blobSize!,
             });
         }
 
@@ -86,7 +89,7 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
     logger.info(queryForm);
 
     const [form, guilds, mcVersions] = await Promise.all([
-        superValidate(zod(postForm)),
+        superValidate(formObject, zod(postForm)),
         fetch('/api/discord/guilds').then((res) => res.json()) as Promise<
             Guild[]
         >,
@@ -95,7 +98,7 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
         >,
     ]);
 
-    logger.info(form, 'form');
+    // logger.info(form, 'form');
 
     return {
         form: form,

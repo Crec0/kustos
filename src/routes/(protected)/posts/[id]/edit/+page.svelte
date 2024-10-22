@@ -27,6 +27,7 @@
     import FileInput from './(components)/file-input/FileInput.svelte';
     import MarkdownEditor from './(components)/markdown-editor/MarkdownEditor.svelte';
     import VersionSelector from './(components)/version-selector/version-selector.svelte';
+    import { onMount } from 'svelte';
 
 
     export let data: PageData;
@@ -35,6 +36,7 @@
 
     const form = superForm(data.form, {
         validators: zod(postForm),
+        dataType: 'json',
         resetForm: false,
     });
 
@@ -150,13 +152,15 @@
                 </Label>
             </RadioGroup>
         </Control>
+        <FieldErrors />
     </Field>
 
     <Field {form} name='versions'>
         <Control let:attrs>
             <Label> Versions </Label>
-            <VersionSelector {...attrs} bind:processedRanges parsedVersions={data.versions} />
+            <VersionSelector {...attrs} bind:processedRanges initialRanges={$formData.versions} parsedVersions={data.versions} />
         </Control>
+        <FieldErrors />
     </Field>
 
     <Field {form} name='description'>
@@ -164,6 +168,7 @@
             <Label> Description </Label>
             <MarkdownEditor {...attrs} value={$formData.description} />
         </Control>
+        <FieldErrors />
     </Field>
 
     <Field {form} name='schematic'>
@@ -174,9 +179,9 @@
                 accept='.litematic'
                 fileType='schematics'
                 postId={$page.params.id}
-            >
-            </FileInput>
+            />
         </Control>
+        <FieldErrors />
     </Field>
 
     <Field {form} name='image'>
@@ -188,9 +193,9 @@
                 fileType='images'
                 isImage
                 postId={$page.params.id}
-            >
-            </FileInput>
+            />
         </Control>
+        <FieldErrors />
     </Field>
 
     <Button class='mt-12 h-12 text-xl' type='submit'>Submit</Button>

@@ -5,12 +5,12 @@
     import { Button } from '$components/ui/form';
     import VirtualList from 'svelte-tiny-virtual-list';
     import Check from 'lucide-svelte/icons/check';
+    import { onMount } from 'svelte';
 
     export let versions: Readable<Record<string, number>>;
     export let selectedVersionId = 696969;
 
     let selectedVersion: string = 'Latest';
-
     let searchValue = writable('');
 
     const filteredVersions = derived([versions, searchValue], ([$versions, $searchValue]) => {
@@ -25,6 +25,10 @@
         selectedVersionId = selection[1];
         open = false;
     }
+
+    onMount(() => {
+        selectedVersion = Object.keys($versions).find((v) => $versions[v] === selectedVersionId) || 'Latest';
+    });
 </script>
 
 <div class="flex items-center justify-between gap-2">

@@ -23,6 +23,7 @@
 
 
     export let parsedVersions: ParsedVersions;
+    export let initialRanges: number[];
 
     const showSnapshots: Writable<boolean> = writable(false);
 
@@ -68,13 +69,15 @@
         return mergedRanges;
     });
 
-    const addRange = async () => {
+    const addRange = async (start: number, end: number) => {
         await tick();
         ranges.update((oldRanges) => {
             const newId = crypto.randomUUID();
-            return new Map(oldRanges).set(newId, { id: newId, start: 696969, end: 696969 });
+            return new Map(oldRanges).set(newId, { id: newId, start, end });
         });
     };
+
+    const addBlankRange = async () => addRange(696969, 696969);
 
     const removeRange = async (id: string) => {
         await tick();
@@ -85,12 +88,20 @@
         });
     };
 
-    onMount(() => addRange());
+    onMount(() => {
+        if ( initialRanges.length > 0 ) {
+            for (let i = 0; i < initialRanges.length; i += 2) {
+                addRange(initialRanges[i], initialRanges[i + 1]);
+            }
+        } else {
+            addBlankRange();
+        }
+    });
 </script>
 
 <Card class='border-0 w-max'>
     <CardHeader class='px-0 py-2 flex flex-row'>
-        <Button on:click={addRange} variant='outline'>
+        <Button on:click={addBlankRange} variant='outline'>
             Add Range
         </Button>
         <div class='flex min-w-fit items-center ml-auto gap-2'>
